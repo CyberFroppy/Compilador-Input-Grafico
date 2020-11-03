@@ -1,12 +1,13 @@
 import ply.lex
 import ply.yacc
-
+import sys
 
 ############### LEXER ###############
 
 # Reserved words
 reserved = {
-    'program': 'PROGRAMA',
+    'program': 'PROGRAM',
+    'main': 'MAIN',
     'var': 'VAR',
     'int': 'INT',
     'float': 'FLOAT',
@@ -15,19 +16,21 @@ reserved = {
     'if': 'IF',
     'else': 'ELSE',
     'then': 'THEN',
-  	'while':'WHILE',
-  	'do':'DO',
-  	'for':'FOR',
-  	'void': 'VOID',
-  	'module':'MODULE',
-	'return':'RETURN',
-  	'write':'WRITE',
-  	'read':'READ'
+    'to': 'TO',
+    'while': 'WHILE',
+    'do': 'DO',
+    'for': 'FOR',
+    'void': 'VOID',
+    'module': 'MODULE',
+    'return': 'RETURN',
+    'write': 'WRITE',
+    'read': 'READ'
 }
 # Token List
 tokens = [
     'ID',
     'COMMENT',
+    'COLON',
     'SEMICOLON',
     'LBRACKET',
     'RBRACKET',
@@ -51,16 +54,17 @@ tokens = [
     'CTEF',
 ] + list(reserved.values())
 
+t_COLON = r':'
 t_SEMICOLON = r';'
 t_LBRACKET = r'{'
 t_RBRACKET = r'}'
 t_EQUAL = r'='
 t_DBEQUALS = r'=='
-t_NOTEQUAL = r'\!=' #revisar Regex
+t_NOTEQUAL = r'\!='  # revisar Regex
 t_GREATERT = r'>'
 t_LESST = r'<'
-t_AND = r'&' #Revisar Regex
-t_OR = r'\|' #Revisar Regex
+t_AND = r'&'  # Revisar Regex
+t_OR = r'\|'  # Revisar Regex
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_DOT = r'\.'
@@ -77,204 +81,222 @@ t_CTEF = r'[1-9][0-9]*\.[0-9]'
 t_ignore = ' \t'
 
 
-#Revisar si el id es una plabra reservada
+# Revisar si el id es una plabra reservada
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value, 'ID')
     return t
 
-#Revisar comentarios
+# Revisar comentarios
+
+
 def t_comment(t):
     r'\%%.*'
     pass
-#Coneo de lineas
+# Coneo de lineas
+
+
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
-#Manejo de errores lexicos
+# Manejo de errores lexicos
+
+
 def t_error(t):
-    print("Lexical error ' {0} ' found in line ' {1} ' ".format(t.value[0], t.lineno))
+    # print("Lexical error  {0}  found in line  {1}  ".format(
+    #     t.value[0], t.lineno))
+    print('Scanner error ', t)
     t.lexer.skip(1)
 
 ############### PARSER ###############
 
-#Cubo semantico
-
+# Cubo semantico
 
 
 # Productions
-start = 'PROGRAMA'
+start = 'programa'
 
 
-def p_empty(p):
-    'empty :'
+# def p_empty(p):
+#     'empty :'
+#     pass
+
+
+def p_programa(p):
+    '''programa : PROGRAM ID SEMICOLON vars module main
+                | PROGRAM ID SEMICOLON module main
+                | PROGRAM ID SEMICOLON vars main
+                | PROGRAM ID SEMICOLON main'''
     pass
 
 
-def p_PROGRAMA(p):
-    'PROGRAMA : PROGRAM ID SEMICOLON PROGRAMA_AUX BLOQUE'
+def p_main(p):
+    '''main : MAIN bloque_module'''
+    # Agregando regla para main
+
+
+def p_vars(p):
+    '''vars : VAR vars_aux'''
     pass
 
 
-def p_PROGRAMA_AUX(p):
-    '''PROGRAMA_AUX : VARS
-    | empty'''
+def p_vars_aux(p):
+    '''vars_aux : vars_aux2 vars_aux
+                | vars_aux2'''
     pass
 
 
-def p_VARS(p):
-    'VARS : VAR VARS_AUX COLON TIPO SEMICOLON VARS_AUX2'
+def p_vars_aux2(p):
+    '''vars_aux2 : ID COMA vars_aux2
+                 | ID COLON tipo SEMICOLON'''
     pass
 
 
-def p_VARS_AUX(p):
-    '''VARS_AUX : ID COMA VARS_AUX
-    | ID'''
+def p_tipo(p):
+    '''tipo : INT
+            | FLOAT'''
     pass
 
 
-def p_VARS_AUX2(p):
-    '''VARS_AUX2 : VARS_AUX COLON TIPO SEMICOLON VARS_AUX2
-    | empty'''
+def p_bloque_module(p):
+    '''bloque_module : LBRACKET estatuto_module_aux RBRACKET
+                     | LBRACKET RBRACKET '''
+
+
+def p_estatuto_module_aux(p):
+    '''estatuto_module_aux : estatuto_module estatuto_module_aux
+                           | estatuto_module'''
     pass
 
 
-def p_TIPO(p):
-    '''TIPO : INT
-    | FLOAT'''
+def p_estatuto_module(p):
+    '''estatuto_module : estatuto
+                       | vars'''
     pass
 
 
-def p_BLOQUE(p):
-    'BLOQUE : LBRACKET ESTATUTO_AUX RBRACKET'
+def p_bloque(p):
+    '''bloque : LBRACKET estatuto_aux RBRACKET
+              | LBRACKET RBRACKET'''
     pass
 
 
-def p_ESTATUTO_AUX(p):
-    '''ESTATUTO_AUX : ESTATUTO ESTATUTO_AUX
-    | empty'''
+def p_estatuto_aux(p):
+    '''estatuto_aux : estatuto estatuto_aux
+                    | estatuto'''
     pass
 
 
-def p_ESTATUTO(p):
-    '''ESTATUTO : ASIGNACION
-    | CONDICION
-    | ESCRITURA'''
+def p_estatuto(p):
+    '''estatuto : asignacion SEMICOLON
+                | condicion SEMICOLON
+                | escritura SEMICOLON
+                | return SEMICOLON
+                | for SEMICOLON
+                | while SEMICOLON'''
     pass
 
 
-def p_ASIGNACION(p):
-    'ASIGNACION : ID EQUAL EXPRESION COLON'
+def p_asignacion(p):
+    'asignacion : ID EQUAL expresion'
     pass
 
 
-def p_EXPRESION(p):
-    'EXPRESION : EXP EXPRESION_AUX'
+def p_expresion(p):
+    '''expresion : exp AND expresion
+                 | exp'''
     pass
 
 
-def p_EXPRESION_AUX(p):
-    '''EXPRESION_AUX : GREATERT EXP
-    | LESST EXP
-    | DIFF EXPRESION
-    | empty'''
+def p_exp(p):
+    '''exp : exp_aux OR exp
+           | exp_aux '''
     pass
 
 
-def p_CONDICION(p):
-    'CONDICION : IF LPAREN EXPRESION RPAREN BLOQUE CONDICION_AUX COLON'
+def p_exp_aux(p):
+    '''exp_aux : exp_aux2 GREATERT exp_aux2
+               | exp_aux2 LESST exp_aux2
+               | exp_aux2 NOTEQUAL exp_aux2
+               | exp_aux2 DBEQUALS exp_aux2
+               | exp_aux2'''
     pass
 
 
-def p_CONDICION_AUX(p):
-    '''CONDICION_AUX : ELSE BLOQUE
-    | empty'''
+def p_exp_aux2(p):
+    '''exp_aux2 : term PLUS exp_aux2
+                | term MINUS exp_aux2
+                | term'''
+
+
+def p_term(p):
+    '''term : factor MULTIPLY term
+            | factor DIVIDE term
+            | factor'''
+
+
+def p_factor(p):
+    '''factor : LPAREN expresion RPAREN
+              | CTEINT
+              | CTEF'''
+
+# Agregando regla para funcion o module (revisar)
+
+
+def p_module(p):
+    '''module : MODULE VOID ID LPAREN vars RPAREN estatuto_module module
+              | MODULE tipo ID LPAREN vars RPAREN estatuto_module module
+              | MODULE VOID ID LPAREN vars RPAREN estatuto_module
+              | MODULE tipo ID LPAREN vars RPAREN estatuto_module'''
+
+
+# Agregando regla para el return
+def p_return(p):
+    '''return : RETURN expresion'''
+    pass
+
+# Agregando regla para ciclo for
+
+
+def p_for(p):
+    '''for : FOR asignacion TO CTEINT LBRACKET estatuto RBRACKET'''
     pass
 
 
-def p_ESCRITURA(p):
-    'ESCRITURA : PRINT LPAREN ESCRITURA_AUX RPAREN SEMICOLON'
+def p_while(p):
+    '''while : WHILE LPAREN expresion RPAREN LBRACKET estatuto RBRACKET'''
     pass
 
 
-def p_ESCRITURA_AUX(p):
-    '''ESCRITURA_AUX : EXPRESION ESCRITURA_AUX2
-    | CTESTRING ESCRITURA_AUX2'''
+def p_condicion(p):
+    '''condicion : IF LPAREN expresion RPAREN bloque ELSE bloque
+                 | IF LPAREN expresion RPAREN bloque'''
     pass
 
 
-def p_ESCRITURA_AUX2(p):
-    '''ESCRITURA_AUX2 : DOT ESCRITURA_AUX
-    | empty'''
+def p_escritura(p):
+    'escritura : PRINT LPAREN escritura_aux RPAREN'
     pass
 
 
-def p_EXP(p):
-    'EXP : TERMINO EXP_AUX'
+def p_escritura_aux(p):
+    '''escritura_aux : expresion escritura_aux2
+                     | CTESTRING escritura_aux2
+                     | expresion
+                     | CTESTRING'''
     pass
 
 
-def p_EXP_AUX(p):
-    '''EXP_AUX : PLUS EXP
-    | MINUS EXP
-    | empty'''
+def p_escritura_aux2(p):
+    '''escritura_aux2 : COMA escritura_aux'''
     pass
-
-
-def p_TERMINO(p):
-    'TERMINO : FACTOR TERMINO_AUX'
-    pass
-
-
-def p_TERMINO_AUX(p):
-    '''TERMINO_AUX : MULTIPLY TERMINO
-    | DIVIDE TERMINO
-    | empty'''
-    pass
-
-
-def p_FACTOR(p):
-    '''FACTOR : LPAREN EXPRESION RPAREN
-    | FACTOR_AUX'''
-    pass
-
-
-def p_FACTOR_AUX(p):
-    '''FACTOR_AUX : PLUS VARCTE
-    | MINUS VARCTE
-    | VARCTE'''
-    pass
-
-
-def p_VARCTE(p):
-    '''VARCTE : ID
-    | CTEINT
-    | CTEF'''
-    pass
-
-
-# Define a rule so we can track line numbers
-
-
-def t_newline(t):
-    r'\n+'
-    t.lexer.lineno += len(t.value)
-
-# Error handling rule
-
-
-def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
-    t.lexer.skip(1)
-
-# Error handling rule for parser
 
 
 def p_error(p):
-    print("Done")
     if not p:
-        print("End of File!")
         return
+
+    print("Parser error ", p)
 
     while True:
         tok = parser.token()
@@ -289,38 +311,16 @@ lexer = ply.lex.lex()
 # Build the parser
 parser = ply.yacc.yacc()
 
-# Test it out
-aux = int(input("1.Programa que cumple\n2.Programa que no cumple\n3.Documento\n"))
 
-data = ""
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print('Please send a file.')
+        raise SyntaxError('mali needs 1 file.')
+    program_name = sys.argv[1]
 
-if(aux == 1):
-    data = '''program Example;
-var aux1: float; aux2: int;
-{
-
-}'''
-
-elif(aux == 2):
-    data = '''programa ~No Cumple~'''
-
-elif(aux == 3):
-    f = open("example.duck", "r")
-    if f.mode == 'r':
-        data = f.read()
-    else:
-        print("Error: input File not found or redable")
-
-
-# Give the lexer some input
-lexer.input(data)
-
-# Tokenize
-while True:
-    tok = lexer.token()
-    if not tok:
-        break
-    print(tok)
-
-result = parser.parse(data)
-print(result)
+    with open(program_name, 'r') as file:
+        try:
+            parser.parse(file.read())
+            print('FINISHED')
+        except:
+            pass
