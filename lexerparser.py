@@ -183,7 +183,8 @@ def p_estatuto(p):
                 | escritura SEMICOLON
                 | return SEMICOLON
                 | for SEMICOLON
-                | while SEMICOLON'''
+                | while SEMICOLON
+                | call_module SEMICOLON'''
 
 
 def p_asignacion(p):
@@ -233,6 +234,9 @@ def p_module(p):
               | MODULE VOID n_seen_type ID n_seen_func_name LPAREN RPAREN bloque_module
               | MODULE tipo ID n_seen_func_name LPAREN RPAREN bloque_module'''
 
+def p_call_module(p):
+    '''call_module : ID LPAREN expresion RPAREN 
+                   | ID LPAREN  RPAREN'''
 
 def p_return(p):
     '''return : RETURN expresion'''
