@@ -146,6 +146,10 @@ def p_vars_aux(p):
     '''vars_aux : ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux
                 | ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON'''
 
+def p_params(p):
+    '''params : ID n_seen_var_name COLON tipo n_set_var_type COMA vars_aux
+              | ID n_seen_var_name COLON tipo n_set_var_type'''
+
 
 def p_tipo(p):
     '''tipo : INT n_seen_type
@@ -232,7 +236,11 @@ def p_module(p):
     '''module : MODULE VOID n_seen_type ID n_seen_func_name LPAREN RPAREN bloque_module module
               | MODULE tipo ID n_seen_func_name LPAREN RPAREN bloque_module module
               | MODULE VOID n_seen_type ID n_seen_func_name LPAREN RPAREN bloque_module
-              | MODULE tipo ID n_seen_func_name LPAREN RPAREN bloque_module'''
+              | MODULE tipo ID n_seen_func_name LPAREN RPAREN bloque_module
+              | MODULE VOID n_seen_type ID n_seen_func_name LPAREN params RPAREN bloque_module module
+              | MODULE tipo ID n_seen_func_name LPAREN params RPAREN bloque_module module
+              | MODULE VOID n_seen_type ID n_seen_func_name LPAREN params RPAREN bloque_module
+              | MODULE tipo ID n_seen_func_name LPAREN params RPAREN bloque_module'''
 
 def p_call_module(p):
     '''call_module : ID LPAREN expresion RPAREN 
