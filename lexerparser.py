@@ -143,13 +143,8 @@ def p_vars(p):
 
 
 def p_vars_aux(p):
-    '''vars_aux : vars_aux2 vars_aux
-                | vars_aux2'''
-
-
-def p_vars_aux2(p):
-    '''vars_aux2 : ID n_seen_var_name COMA vars_aux2
-                 | ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON'''
+    '''vars_aux : ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux
+                | ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON'''
 
 
 def p_tipo(p):
