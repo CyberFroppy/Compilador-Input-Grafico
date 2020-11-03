@@ -1,5 +1,9 @@
 program Example;
-var aux1, aux2: float; aux3: int; 
+var aux1: float; aux2: float; aux3: int; 
+
+module int func () {
+  hola = 3;
+}
 
 main {
   aux1 = 39.0;
@@ -7,6 +11,6 @@ main {
      aux3 = 12;
   } else {
     aux3 = 24;
-  }
+  };
   print("Good Example", aux1);
 }

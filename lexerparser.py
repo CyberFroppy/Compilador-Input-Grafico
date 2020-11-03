@@ -108,18 +108,22 @@ def t_error(t):
     print('Scanner error ', t)
     t.lexer.skip(1)
 
+############### ESTRUCTURAS ###############
+
+
+current_func = '#global'
+current_var = None
+current_type = None
+symbol_table = {
+    '#global': {
+        'vars': {},
+    }
+}
+
 ############### PARSER ###############
-
-# Cubo semantico
-
 
 # Productions
 start = 'programa'
-
-
-# def p_empty(p):
-#     'empty :'
-#     pass
 
 
 def p_programa(p):
@@ -132,30 +136,25 @@ def p_programa(p):
 
 def p_main(p):
     '''main : MAIN bloque_module'''
-    # Agregando regla para main
 
 
 def p_vars(p):
     '''vars : VAR vars_aux'''
-    pass
 
 
 def p_vars_aux(p):
     '''vars_aux : vars_aux2 vars_aux
                 | vars_aux2'''
-    pass
 
 
 def p_vars_aux2(p):
-    '''vars_aux2 : ID COMA vars_aux2
-                 | ID COLON tipo SEMICOLON'''
-    pass
+    '''vars_aux2 : ID n_seen_var_name COMA vars_aux2
+                 | ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON'''
 
 
 def p_tipo(p):
-    '''tipo : INT
-            | FLOAT'''
-    pass
+    '''tipo : INT n_seen_type
+            | FLOAT n_seen_type'''
 
 
 def p_bloque_module(p):
@@ -166,25 +165,21 @@ def p_bloque_module(p):
 def p_estatuto_module_aux(p):
     '''estatuto_module_aux : estatuto_module estatuto_module_aux
                            | estatuto_module'''
-    pass
 
 
 def p_estatuto_module(p):
     '''estatuto_module : estatuto
                        | vars'''
-    pass
 
 
 def p_bloque(p):
     '''bloque : LBRACKET estatuto_aux RBRACKET
               | LBRACKET RBRACKET'''
-    pass
 
 
 def p_estatuto_aux(p):
     '''estatuto_aux : estatuto estatuto_aux
                     | estatuto'''
-    pass
 
 
 def p_estatuto(p):
@@ -194,24 +189,20 @@ def p_estatuto(p):
                 | return SEMICOLON
                 | for SEMICOLON
                 | while SEMICOLON'''
-    pass
 
 
 def p_asignacion(p):
     'asignacion : ID EQUAL expresion'
-    pass
 
 
 def p_expresion(p):
     '''expresion : exp AND expresion
                  | exp'''
-    pass
 
 
 def p_exp(p):
     '''exp : exp_aux OR exp
            | exp_aux '''
-    pass
 
 
 def p_exp_aux(p):
@@ -220,7 +211,6 @@ def p_exp_aux(p):
                | exp_aux2 NOTEQUAL exp_aux2
                | exp_aux2 DBEQUALS exp_aux2
                | exp_aux2'''
-    pass
 
 
 def p_exp_aux2(p):
@@ -238,58 +228,43 @@ def p_term(p):
 def p_factor(p):
     '''factor : LPAREN expresion RPAREN
               | CTEINT
-              | CTEF'''
-
-# Agregando regla para funcion o module (revisar)
+              | CTEF
+              | ID'''
 
 
 def p_module(p):
-    '''module : MODULE VOID ID LPAREN vars RPAREN estatuto_module module
-              | MODULE tipo ID LPAREN vars RPAREN estatuto_module module
-              | MODULE VOID ID LPAREN vars RPAREN estatuto_module
-              | MODULE tipo ID LPAREN vars RPAREN estatuto_module'''
+    '''module : MODULE VOID n_seen_type ID n_seen_func_name LPAREN RPAREN bloque_module module
+              | MODULE tipo ID n_seen_func_name LPAREN RPAREN bloque_module module
+              | MODULE VOID n_seen_type ID n_seen_func_name LPAREN RPAREN bloque_module
+              | MODULE tipo ID n_seen_func_name LPAREN RPAREN bloque_module'''
 
 
-# Agregando regla para el return
 def p_return(p):
     '''return : RETURN expresion'''
-    pass
-
-# Agregando regla para ciclo for
 
 
 def p_for(p):
     '''for : FOR asignacion TO CTEINT LBRACKET estatuto RBRACKET'''
-    pass
 
 
 def p_while(p):
     '''while : WHILE LPAREN expresion RPAREN LBRACKET estatuto RBRACKET'''
-    pass
 
 
 def p_condicion(p):
     '''condicion : IF LPAREN expresion RPAREN bloque ELSE bloque
                  | IF LPAREN expresion RPAREN bloque'''
-    pass
 
 
 def p_escritura(p):
     'escritura : PRINT LPAREN escritura_aux RPAREN'
-    pass
 
 
 def p_escritura_aux(p):
-    '''escritura_aux : expresion escritura_aux2
-                     | CTESTRING escritura_aux2
+    '''escritura_aux : expresion COMA escritura_aux
+                     | CTESTRING COMA escritura_aux
                      | expresion
                      | CTESTRING'''
-    pass
-
-
-def p_escritura_aux2(p):
-    '''escritura_aux2 : COMA escritura_aux'''
-    pass
 
 
 def p_error(p):
@@ -303,6 +278,41 @@ def p_error(p):
         if not tok or tok.type == 'closebrac':
             break
     parser.restart()
+
+############### PUNTOS NEURALGICOS ###############
+
+
+def p_n_seen_type(p):
+    'n_seen_type : '
+    global current_type
+    current_type = p[-1]
+
+
+def p_n_seen_var_name(p):
+    'n_seen_var_name : '
+    global symbol_table, current_var
+    symbol_table['#global']['vars'][p[-1]] = {
+        'type': None
+    }
+    current_var = p[-1]
+
+
+def p_n_seen_func_name(p):
+    'n_seen_func_name : '
+    global symbol_table, current_func, current_type
+    symbol_table[p[-1]] = {
+        'vars': {},
+        'type': current_type,
+    }
+    current_func = p[-1]
+
+
+def p_n_set_var_type(p):
+    'n_set_var_type : '
+    global symbol_table, current_func, current_var, current_type
+    symbol_table[current_func]['vars'][current_var]['type'] = current_type
+
+############### EJECUCION ###############
 
 
 # Build Lexer
@@ -322,5 +332,6 @@ if __name__ == '__main__':
         try:
             parser.parse(file.read())
             print('FINISHED')
+            print(symbol_table)
         except:
             pass
