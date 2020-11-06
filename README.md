@@ -69,5 +69,19 @@ You should ask for access to this tools if you don't have it already:
 - [Backlog](https://trello.com/b/aSU8Q6P8/compiladores)
 - [Documentation](https://drive.google.com/drive/folders/1QNZR0BwuejZxBOVS2LcruMwqnEL-zrOb?usp=sharing)
 
+## Bitacora de Avances 
+### Avance 1
+Se trabajó en el Lexer y el parser en su primera versión. 
 
+### Avance 2 
+Se investigó acerca de la GUI para poder generar el código y probarlo en el compilador. 
+
+### Avance 3 
+Se termino de corregir el lexer y se modifico el parser para que funcionara, se creo el cubo semántico y la tabla de variables. Tambien se definió el como se puede hacer la gui.
+
+### Avance 4
+Se corrigieron y completaron todas las reglas de parseo asi como se creo la tabla de varibles y funciones neuralgicas para ello.
+
+### Avance 5
+Se termino la tabla de variables locales y globales y puntos neuralgicos para guarda cada una de esta asi como las funciones.
 
