@@ -146,6 +146,9 @@ def p_vars_aux(p):
     '''vars_aux : ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux
                 | ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON'''
 
+def p_vars_func(p):
+    '''vars_func : ID n_seen_var_name COLON tipo n_set_var_type COMA vars_aux
+                 | ID n_seen_var_name COLON tipo n_set_var_type '''
 
 def p_tipo(p):
     '''tipo : INT n_seen_type
@@ -229,14 +232,18 @@ def p_factor(p):
 
 
 def p_module(p):
-    '''module : MODULE VOID n_seen_type ID n_seen_func_name LPAREN RPAREN bloque_module module
-              | MODULE tipo ID n_seen_func_name LPAREN RPAREN bloque_module module
-              | MODULE VOID n_seen_type ID n_seen_func_name LPAREN RPAREN bloque_module
-              | MODULE tipo ID n_seen_func_name LPAREN RPAREN bloque_module'''
+    '''module : MODULE VOID n_seen_type ID n_seen_func_name params bloque_module module
+              | MODULE tipo ID n_seen_func_name params bloque_module module
+              | MODULE VOID n_seen_type ID n_seen_func_name params bloque_module
+              | MODULE tipo ID n_seen_func_name params bloque_module'''
+
+def p_params(p):
+    '''params : LPAREN vars_func RPAREN
+              | LPAREN RPAREN'''
 
 def p_call_module(p):
     '''call_module : ID LPAREN expresion RPAREN 
-                   | ID LPAREN  RPAREN'''
+                   | ID LPAREN RPAREN'''
 
 def p_return(p):
     '''return : RETURN expresion'''
@@ -309,7 +316,9 @@ def p_n_seen_func_name(p):
 def p_n_set_var_type(p):
     'n_set_var_type : '
     global symbol_table, current_func, current_var, current_type
-    symbol_table[current_func]['vars'][current_var]['type'] = current_type
+    symbol_table[current_func]['vars'][current_var] = {
+        'type' : current_type
+    }
 
 ############### EJECUCION ###############
 

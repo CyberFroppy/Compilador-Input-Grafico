@@ -1,7 +1,8 @@
 program Example;
 var aux1: float; aux2: float; aux3: int; 
 
-module int func () {
+module int func (hola:int) {
+  var pepe: float;
   hola = 3;
 }
 
