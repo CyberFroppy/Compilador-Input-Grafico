@@ -147,8 +147,8 @@ def p_vars_aux(p):
                 | ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON'''
 
 def p_vars_func(p):
-    '''vars_func : ID n_seen_var_name COLON tipo n_set_var_type COMA vars_aux
-                 | ID n_seen_var_name COLON tipo n_set_var_type '''
+    '''vars_func : ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
+                 | ID n_seen_var_name COLON tipo n_set_var_type'''
 
 def p_tipo(p):
     '''tipo : INT n_seen_type
@@ -296,12 +296,19 @@ def p_n_seen_type(p):
 
 def p_n_seen_var_name(p):
     'n_seen_var_name : '
-    global symbol_table, current_var
-    symbol_table['#global']['vars'][p[-1]] = {
-        'type': None
-    }
-    current_var = p[-1]
-
+    global symbol_table,current_var, current_func
+    if(current_func != "#global"):
+      
+        symbol_table[current_func]['vars'][p[-1]] = {
+            'type': None
+        }
+        current_var = p[-1]
+    else:
+        symbol_table['#global']['vars'][p[-1]] = {
+            'type': None
+        }
+        current_var = p[-1]
+    
 
 def p_n_seen_func_name(p):
     'n_seen_func_name : '
