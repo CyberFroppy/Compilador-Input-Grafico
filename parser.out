@@ -21,7 +21,7 @@ Rule 5     main -> MAIN bloque_module
 Rule 6     vars -> VAR vars_aux
 Rule 7     vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux
 Rule 8     vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON
-Rule 9     vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_aux
+Rule 9     vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
 Rule 10    vars_func -> ID n_seen_var_name COLON tipo n_set_var_type
 Rule 11    tipo -> INT n_seen_type
 Rule 12    tipo -> FLOAT n_seen_type
@@ -163,8 +163,8 @@ return               : 26
 term                 : 40 41 42 43 44
 tipo                 : 7 8 9 10 51 53
 vars                 : 1 3 18
-vars_aux             : 6 7 9
-vars_func            : 54
+vars_aux             : 6 7
+vars_func            : 9 54
 while                : 28
 
 Parsing method: LALR
@@ -1279,7 +1279,7 @@ state 78
 
     (54) params -> LPAREN . vars_func RPAREN
     (55) params -> LPAREN . RPAREN
-    (9) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type COMA vars_aux
+    (9) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
     (10) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type
 
     RPAREN          shift and go to state 103
@@ -1655,7 +1655,7 @@ state 103
 
 state 104
 
-    (9) vars_func -> ID . n_seen_var_name COLON tipo n_set_var_type COMA vars_aux
+    (9) vars_func -> ID . n_seen_var_name COLON tipo n_set_var_type COMA vars_func
     (10) vars_func -> ID . n_seen_var_name COLON tipo n_set_var_type
     (69) n_seen_var_name -> .
 
@@ -1958,7 +1958,6 @@ state 123
     FOR             reduce using rule 8 (vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON .)
     WHILE           reduce using rule 8 (vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON .)
     RBRACKET        reduce using rule 8 (vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON .)
-    RPAREN          reduce using rule 8 (vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON .)
     ID              shift and go to state 15
 
   ! ID              [ reduce using rule 8 (vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON .) ]
@@ -1995,7 +1994,7 @@ state 126
 
 state 127
 
-    (9) vars_func -> ID n_seen_var_name . COLON tipo n_set_var_type COMA vars_aux
+    (9) vars_func -> ID n_seen_var_name . COLON tipo n_set_var_type COMA vars_func
     (10) vars_func -> ID n_seen_var_name . COLON tipo n_set_var_type
 
     COLON           shift and go to state 136
@@ -2151,7 +2150,6 @@ state 134
     FOR             reduce using rule 7 (vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux .)
     WHILE           reduce using rule 7 (vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux .)
     RBRACKET        reduce using rule 7 (vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux .)
-    RPAREN          reduce using rule 7 (vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux .)
 
 
 state 135
@@ -2163,7 +2161,7 @@ state 135
 
 state 136
 
-    (9) vars_func -> ID n_seen_var_name COLON . tipo n_set_var_type COMA vars_aux
+    (9) vars_func -> ID n_seen_var_name COLON . tipo n_set_var_type COMA vars_func
     (10) vars_func -> ID n_seen_var_name COLON . tipo n_set_var_type
     (11) tipo -> . INT n_seen_type
     (12) tipo -> . FLOAT n_seen_type
@@ -2255,7 +2253,7 @@ state 142
 
 state 143
 
-    (9) vars_func -> ID n_seen_var_name COLON tipo . n_set_var_type COMA vars_aux
+    (9) vars_func -> ID n_seen_var_name COLON tipo . n_set_var_type COMA vars_func
     (10) vars_func -> ID n_seen_var_name COLON tipo . n_set_var_type
     (71) n_set_var_type -> .
 
@@ -2302,7 +2300,7 @@ state 148
 
 state 149
 
-    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type . COMA vars_aux
+    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type . COMA vars_func
     (10) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type .
 
     COMA            shift and go to state 150
@@ -2311,19 +2309,19 @@ state 149
 
 state 150
 
-    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA . vars_aux
-    (7) vars_aux -> . ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux
-    (8) vars_aux -> . ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON
+    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA . vars_func
+    (9) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
+    (10) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type
 
-    ID              shift and go to state 15
+    ID              shift and go to state 104
 
-    vars_aux                       shift and go to state 151
+    vars_func                      shift and go to state 151
 
 state 151
 
-    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_aux .
+    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func .
 
-    RPAREN          reduce using rule 9 (vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_aux .)
+    RPAREN          reduce using rule 9 (vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func .)
 
 WARNING: 
 WARNING: Conflicts:
