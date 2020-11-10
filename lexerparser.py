@@ -120,6 +120,31 @@ symbol_table = {
     }
 }
 
+next_constant_int = 0
+next_constant_float = 1000
+next_constant_char = 2000
+next_local_int = 3000
+next_local_float = 4000
+next_local_char = 5000
+next_global_int = 6000
+next_global_float = 7000
+next_global_char = 8000
+constant_table = {}
+
+
+cuadruplos = []
+pila_operadores = []
+pila_operandos = []
+pila_tipos = []
+
+def print_todo():
+    print('tabla de simbolo: ', symbol_table)
+    print('tabla de constantes: ', constant_table)
+    print('pila operadores: ', pila_operadores)
+    print('pila operandos: ', pila_operandos)
+    print('pila tipos: ', pila_tipos)
+    print('cuadruplos: ', cuadruplos)
+
 ############### PARSER ###############
 
 # Productions
@@ -144,7 +169,7 @@ def p_vars(p):
 
 def p_vars_aux(p):
     '''vars_aux : ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux
-                | ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON'''
+                | ID n_seen_var_name COLON tipo n_set_var_type DOT'''
 
 def p_vars_func(p):
     '''vars_func : ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
@@ -156,18 +181,10 @@ def p_tipo(p):
 
 
 def p_bloque_module(p):
-    '''bloque_module : LBRACKET estatuto_module_aux RBRACKET
+    '''bloque_module : LBRACKET vars estatuto_aux RBRACKET
+                     | LBRACKET vars RBRACKET
+                     | LBRACKET estatuto_aux RBRACKET
                      | LBRACKET RBRACKET '''
-
-
-def p_estatuto_module_aux(p):
-    '''estatuto_module_aux : estatuto_module estatuto_module_aux
-                           | estatuto_module'''
-
-
-def p_estatuto_module(p):
-    '''estatuto_module : estatuto
-                       | vars'''
 
 
 def p_bloque(p):
@@ -226,9 +243,9 @@ def p_term(p):
 
 def p_factor(p):
     '''factor : LPAREN expresion RPAREN
-              | CTEINT
-              | CTEF
-              | ID'''
+              | CTEINT n_seen_factor_int
+              | CTEF 
+              | ID n_seen_factor_id'''
 
 
 def p_module(p):
@@ -276,14 +293,15 @@ def p_escritura_aux(p):
 def p_error(p):
     if not p:
         return
-
     print("Parser error ", p)
+    print_todo()
+    sys.exit()
+    
 
-    while True:
-        tok = parser.token()
-        if not tok or tok.type == 'closebrac':
-            break
-    parser.restart()
+def error(message):
+    print('Error: ', message)
+    print_todo()
+    sys.exit()
 
 ############### PUNTOS NEURALGICOS ###############
 
@@ -300,32 +318,84 @@ def p_n_seen_var_name(p):
     if(current_func != "#global"):
       
         symbol_table[current_func]['vars'][p[-1]] = {
-            'type': None
+            'type': None,
+            'address': None
         }
         current_var = p[-1]
     else:
         symbol_table['#global']['vars'][p[-1]] = {
-            'type': None
+            'type': None,
+            'address': None
         }
         current_var = p[-1]
     
 
 def p_n_seen_func_name(p):
     'n_seen_func_name : '
-    global symbol_table, current_func, current_type
+    global symbol_table, current_func, current_type, next_local_int, next_local_float, next_local_char
+    next_local_int = 3000
+    next_local_float = 4000
+    next_local_char = 5000
     symbol_table[p[-1]] = {
         'vars': {},
         'type': current_type,
     }
     current_func = p[-1]
 
+def get_next_var_address():
+    global current_func, current_type, next_global_int, next_global_float, next_global_char,next_local_int, next_local_float, next_local_char
+    if current_func == '#global':
+        if current_type == 'int':
+            aux = next_global_int
+            next_global_int += 1
+        elif current_type == 'float':
+            aux = next_global_float
+            next_global_float += 1
+        elif current_type == 'char':
+            aux = next_global_char
+            next_global_char += 1
+    else:
+        if current_type == 'int':
+            aux = next_local_int
+            next_local_int += 1
+        elif current_type == 'float':
+            aux = next_local_float
+            next_local_float += 1
+        elif current_type == 'char':
+            aux = next_local_char
+            next_local_char += 1
+    return aux
 
 def p_n_set_var_type(p):
     'n_set_var_type : '
     global symbol_table, current_func, current_var, current_type
     symbol_table[current_func]['vars'][current_var] = {
-        'type' : current_type
+        'type': current_type,
+        'address': get_next_var_address()
     }
+
+def search(id):
+    global symbol_table, current_func
+    if id in symbol_table[current_func]['vars']:
+        return symbol_table[current_func]['vars'][id]['type']
+    elif id in symbol_table['#global']['vars']:
+        return symbol_table['#global']['vars'][id]['type']
+    else:
+        error('No se encontró la viarable ' + id)
+
+def p_n_seen_factor_id(p):
+    'n_seen_factor_id : '
+    global pila_operandos, pila_tipos
+    pila_operandos.append(p[-1])
+    pila_tipos.append(search(p[-1]))
+
+def p_n_seen_factor_int(p):
+    'n_seen_factor_int : '
+    global pila_operandos, pila_tipos
+    ### asignar la dirección constante
+    pila_operandos.append(p[-1])
+    pila_tipos.append('int')
+
 
 ############### EJECUCION ###############
 
@@ -347,6 +417,6 @@ if __name__ == '__main__':
         try:
             parser.parse(file.read())
             print('FINISHED')
-            print(symbol_table)
+            print_todo()
         except:
             pass

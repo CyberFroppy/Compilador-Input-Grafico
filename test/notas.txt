@@ -1,0 +1,22 @@
+Constantes
+    int
+        0 - 999
+    float
+        1000 - 1999
+    char
+        2000 - 2999
+Variables
+    locales
+        int
+            3000 - 3999
+        float
+            4000 - 4999
+        char
+            5000 - 5999
+    globales
+        int
+            6000 - 6999
+        float
+            7000 - 7999
+        char
+            8000 - 8999
