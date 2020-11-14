@@ -1,4 +1,7 @@
-CUBO = {
+def return_type_cubo(left_oper,right_oper,operator):
+    return cubo_semantico[left_oper][right_oper][operator]
+    
+cubo_semantico = {
    ' int':{
         'int':{
             '+': 'int',

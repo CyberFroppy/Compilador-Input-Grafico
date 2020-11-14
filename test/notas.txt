@@ -20,3 +20,6 @@ Variables
             7000 - 7999
         char
             8000 - 8999
+
+Se registra la direccion de la segunda constante repetida. 
+Hacer print a un mensaje cuando se llenan las direcciones
