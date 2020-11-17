@@ -49,11 +49,11 @@ Rule 35    exp_aux -> exp_aux2 LESST exp_aux2
 Rule 36    exp_aux -> exp_aux2 NOTEQUAL exp_aux2
 Rule 37    exp_aux -> exp_aux2 DBEQUALS exp_aux2
 Rule 38    exp_aux -> exp_aux2
-Rule 39    exp_aux2 -> term PLUS n_add_operator exp_aux2
-Rule 40    exp_aux2 -> term MINUS n_add_operator exp_aux2
+Rule 39    exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term
+Rule 40    exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term
 Rule 41    exp_aux2 -> term
-Rule 42    term -> factor MULTIPLY n_add_operator term
-Rule 43    term -> factor DIVIDE n_add_operator term
+Rule 42    term -> factor MULTIPLY n_add_operator term n_gen_factor
+Rule 43    term -> factor DIVIDE n_add_operator term n_gen_factor
 Rule 44    term -> factor
 Rule 45    factor -> LPAREN expresion RPAREN
 Rule 46    factor -> CTEINT n_seen_factor_int
@@ -87,6 +87,8 @@ Rule 73    n_seen_factor_int -> <empty>
 Rule 74    n_seen_factor_float -> <empty>
 Rule 75    n_seen_factor_char -> <empty>
 Rule 76    n_add_operator -> <empty>
+Rule 77    n_gen_term -> <empty>
+Rule 78    n_gen_factor -> <empty>
 
 Terminals, with rules where they appear
 
@@ -156,6 +158,8 @@ for                  : 26
 main                 : 1 2 3 4
 module               : 1 2 50 51
 n_add_operator       : 39 40 42 43
+n_gen_factor         : 42 43
+n_gen_term           : 39 40
 n_seen_factor_char   : 48
 n_seen_factor_float  : 47
 n_seen_factor_id     : 49
@@ -714,11 +718,11 @@ state 44
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -925,11 +929,11 @@ state 61
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -963,11 +967,11 @@ state 62
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1002,11 +1006,11 @@ state 63
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1043,11 +1047,11 @@ state 64
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1124,8 +1128,8 @@ state 68
 
 state 69
 
-    (39) exp_aux2 -> term . PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> term . MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> term . PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> term . MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> term .
 
     PLUS            shift and go to state 97
@@ -1144,8 +1148,8 @@ state 69
 
 state 70
 
-    (42) term -> factor . MULTIPLY n_add_operator term
-    (43) term -> factor . DIVIDE n_add_operator term
+    (42) term -> factor . MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> factor . DIVIDE n_add_operator term n_gen_factor
     (44) term -> factor .
 
     MULTIPLY        shift and go to state 99
@@ -1176,11 +1180,11 @@ state 71
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1315,11 +1319,11 @@ state 78
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1463,11 +1467,11 @@ state 91
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1498,11 +1502,11 @@ state 92
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1525,11 +1529,11 @@ state 92
 state 93
 
     (34) exp_aux -> exp_aux2 GREATERT . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1550,11 +1554,11 @@ state 93
 state 94
 
     (35) exp_aux -> exp_aux2 LESST . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1575,11 +1579,11 @@ state 94
 state 95
 
     (36) exp_aux -> exp_aux2 NOTEQUAL . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1600,11 +1604,11 @@ state 95
 state 96
 
     (37) exp_aux -> exp_aux2 DBEQUALS . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1624,7 +1628,7 @@ state 96
 
 state 97
 
-    (39) exp_aux2 -> term PLUS . n_add_operator exp_aux2
+    (39) exp_aux2 -> term PLUS . n_add_operator exp_aux2 n_gen_term
     (76) n_add_operator -> .
 
     LPAREN          reduce using rule 76 (n_add_operator -> .)
@@ -1637,7 +1641,7 @@ state 97
 
 state 98
 
-    (40) exp_aux2 -> term MINUS . n_add_operator exp_aux2
+    (40) exp_aux2 -> term MINUS . n_add_operator exp_aux2 n_gen_term
     (76) n_add_operator -> .
 
     LPAREN          reduce using rule 76 (n_add_operator -> .)
@@ -1650,7 +1654,7 @@ state 98
 
 state 99
 
-    (42) term -> factor MULTIPLY . n_add_operator term
+    (42) term -> factor MULTIPLY . n_add_operator term n_gen_factor
     (76) n_add_operator -> .
 
     LPAREN          reduce using rule 76 (n_add_operator -> .)
@@ -1663,7 +1667,7 @@ state 99
 
 state 100
 
-    (43) term -> factor DIVIDE . n_add_operator term
+    (43) term -> factor DIVIDE . n_add_operator term n_gen_factor
     (76) n_add_operator -> .
 
     LPAREN          reduce using rule 76 (n_add_operator -> .)
@@ -1876,11 +1880,11 @@ state 117
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -1919,11 +1923,11 @@ state 118
     (36) exp_aux -> . exp_aux2 NOTEQUAL exp_aux2
     (37) exp_aux -> . exp_aux2 DBEQUALS exp_aux2
     (38) exp_aux -> . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -2017,12 +2021,12 @@ state 124
 
 state 125
 
-    (39) exp_aux2 -> term PLUS n_add_operator . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (39) exp_aux2 -> term PLUS n_add_operator . exp_aux2 n_gen_term
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -2042,12 +2046,12 @@ state 125
 
 state 126
 
-    (40) exp_aux2 -> term MINUS n_add_operator . exp_aux2
-    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2
-    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2
+    (40) exp_aux2 -> term MINUS n_add_operator . exp_aux2 n_gen_term
+    (39) exp_aux2 -> . term PLUS n_add_operator exp_aux2 n_gen_term
+    (40) exp_aux2 -> . term MINUS n_add_operator exp_aux2 n_gen_term
     (41) exp_aux2 -> . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -2067,9 +2071,9 @@ state 126
 
 state 127
 
-    (42) term -> factor MULTIPLY n_add_operator . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (42) term -> factor MULTIPLY n_add_operator . term n_gen_factor
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -2088,9 +2092,9 @@ state 127
 
 state 128
 
-    (43) term -> factor DIVIDE n_add_operator . term
-    (42) term -> . factor MULTIPLY n_add_operator term
-    (43) term -> . factor DIVIDE n_add_operator term
+    (43) term -> factor DIVIDE n_add_operator . term n_gen_factor
+    (42) term -> . factor MULTIPLY n_add_operator term n_gen_factor
+    (43) term -> . factor DIVIDE n_add_operator term n_gen_factor
     (44) term -> . factor
     (45) factor -> . LPAREN expresion RPAREN
     (46) factor -> . CTEINT n_seen_factor_int
@@ -2268,71 +2272,79 @@ state 141
 
 state 142
 
-    (39) exp_aux2 -> term PLUS n_add_operator exp_aux2 .
+    (39) exp_aux2 -> term PLUS n_add_operator exp_aux2 . n_gen_term
+    (77) n_gen_term -> .
 
-    GREATERT        reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
-    LESST           reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
-    NOTEQUAL        reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
-    DBEQUALS        reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
-    OR              reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
-    AND             reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
-    SEMICOLON       reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
-    TO              reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
-    RPAREN          reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
-    COMA            reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 .)
+    GREATERT        reduce using rule 77 (n_gen_term -> .)
+    LESST           reduce using rule 77 (n_gen_term -> .)
+    NOTEQUAL        reduce using rule 77 (n_gen_term -> .)
+    DBEQUALS        reduce using rule 77 (n_gen_term -> .)
+    OR              reduce using rule 77 (n_gen_term -> .)
+    AND             reduce using rule 77 (n_gen_term -> .)
+    SEMICOLON       reduce using rule 77 (n_gen_term -> .)
+    TO              reduce using rule 77 (n_gen_term -> .)
+    RPAREN          reduce using rule 77 (n_gen_term -> .)
+    COMA            reduce using rule 77 (n_gen_term -> .)
 
+    n_gen_term                     shift and go to state 154
 
 state 143
 
-    (40) exp_aux2 -> term MINUS n_add_operator exp_aux2 .
+    (40) exp_aux2 -> term MINUS n_add_operator exp_aux2 . n_gen_term
+    (77) n_gen_term -> .
 
-    GREATERT        reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
-    LESST           reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
-    NOTEQUAL        reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
-    DBEQUALS        reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
-    OR              reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
-    AND             reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
-    SEMICOLON       reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
-    TO              reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
-    RPAREN          reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
-    COMA            reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 .)
+    GREATERT        reduce using rule 77 (n_gen_term -> .)
+    LESST           reduce using rule 77 (n_gen_term -> .)
+    NOTEQUAL        reduce using rule 77 (n_gen_term -> .)
+    DBEQUALS        reduce using rule 77 (n_gen_term -> .)
+    OR              reduce using rule 77 (n_gen_term -> .)
+    AND             reduce using rule 77 (n_gen_term -> .)
+    SEMICOLON       reduce using rule 77 (n_gen_term -> .)
+    TO              reduce using rule 77 (n_gen_term -> .)
+    RPAREN          reduce using rule 77 (n_gen_term -> .)
+    COMA            reduce using rule 77 (n_gen_term -> .)
 
+    n_gen_term                     shift and go to state 155
 
 state 144
 
-    (42) term -> factor MULTIPLY n_add_operator term .
+    (42) term -> factor MULTIPLY n_add_operator term . n_gen_factor
+    (78) n_gen_factor -> .
 
-    PLUS            reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    MINUS           reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    GREATERT        reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    LESST           reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    NOTEQUAL        reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    DBEQUALS        reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    OR              reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    AND             reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    SEMICOLON       reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    TO              reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    RPAREN          reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
-    COMA            reduce using rule 42 (term -> factor MULTIPLY n_add_operator term .)
+    PLUS            reduce using rule 78 (n_gen_factor -> .)
+    MINUS           reduce using rule 78 (n_gen_factor -> .)
+    GREATERT        reduce using rule 78 (n_gen_factor -> .)
+    LESST           reduce using rule 78 (n_gen_factor -> .)
+    NOTEQUAL        reduce using rule 78 (n_gen_factor -> .)
+    DBEQUALS        reduce using rule 78 (n_gen_factor -> .)
+    OR              reduce using rule 78 (n_gen_factor -> .)
+    AND             reduce using rule 78 (n_gen_factor -> .)
+    SEMICOLON       reduce using rule 78 (n_gen_factor -> .)
+    TO              reduce using rule 78 (n_gen_factor -> .)
+    RPAREN          reduce using rule 78 (n_gen_factor -> .)
+    COMA            reduce using rule 78 (n_gen_factor -> .)
 
+    n_gen_factor                   shift and go to state 156
 
 state 145
 
-    (43) term -> factor DIVIDE n_add_operator term .
+    (43) term -> factor DIVIDE n_add_operator term . n_gen_factor
+    (78) n_gen_factor -> .
 
-    PLUS            reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    MINUS           reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    GREATERT        reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    LESST           reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    NOTEQUAL        reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    DBEQUALS        reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    OR              reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    AND             reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    SEMICOLON       reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    TO              reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    RPAREN          reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
-    COMA            reduce using rule 43 (term -> factor DIVIDE n_add_operator term .)
+    PLUS            reduce using rule 78 (n_gen_factor -> .)
+    MINUS           reduce using rule 78 (n_gen_factor -> .)
+    GREATERT        reduce using rule 78 (n_gen_factor -> .)
+    LESST           reduce using rule 78 (n_gen_factor -> .)
+    NOTEQUAL        reduce using rule 78 (n_gen_factor -> .)
+    DBEQUALS        reduce using rule 78 (n_gen_factor -> .)
+    OR              reduce using rule 78 (n_gen_factor -> .)
+    AND             reduce using rule 78 (n_gen_factor -> .)
+    SEMICOLON       reduce using rule 78 (n_gen_factor -> .)
+    TO              reduce using rule 78 (n_gen_factor -> .)
+    RPAREN          reduce using rule 78 (n_gen_factor -> .)
+    COMA            reduce using rule 78 (n_gen_factor -> .)
 
+    n_gen_factor                   shift and go to state 157
 
 state 146
 
@@ -2362,7 +2374,7 @@ state 146
     WHILE           shift and go to state 46
 
     asignacion                     shift and go to state 34
-    estatuto                       shift and go to state 154
+    estatuto                       shift and go to state 158
     condicion                      shift and go to state 35
     escritura                      shift and go to state 36
     return                         shift and go to state 37
@@ -2397,7 +2409,7 @@ state 147
     FOR             shift and go to state 45
     WHILE           shift and go to state 46
 
-    estatuto                       shift and go to state 155
+    estatuto                       shift and go to state 159
     asignacion                     shift and go to state 34
     condicion                      shift and go to state 35
     escritura                      shift and go to state 36
@@ -2440,7 +2452,7 @@ state 150
     FLOAT           shift and go to state 19
     CHAR            shift and go to state 20
 
-    tipo                           shift and go to state 156
+    tipo                           shift and go to state 160
 
 state 151
 
@@ -2450,13 +2462,13 @@ state 151
 
     LBRACKET        shift and go to state 139
 
-    bloque                         shift and go to state 157
+    bloque                         shift and go to state 161
 
 state 152
 
     (18) bloque -> LBRACKET estatuto_aux . RBRACKET
 
-    RBRACKET        shift and go to state 158
+    RBRACKET        shift and go to state 162
 
 
 state 153
@@ -2469,19 +2481,87 @@ state 153
 
 state 154
 
-    (59) for -> FOR asignacion TO CTEINT LBRACKET estatuto . RBRACKET
+    (39) exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .
 
-    RBRACKET        shift and go to state 159
+    GREATERT        reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
+    LESST           reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
+    NOTEQUAL        reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
+    DBEQUALS        reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
+    OR              reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
+    AND             reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
+    SEMICOLON       reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
+    TO              reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
+    RPAREN          reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
+    COMA            reduce using rule 39 (exp_aux2 -> term PLUS n_add_operator exp_aux2 n_gen_term .)
 
 
 state 155
 
-    (60) while -> WHILE LPAREN expresion RPAREN LBRACKET estatuto . RBRACKET
+    (40) exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .
 
-    RBRACKET        shift and go to state 160
+    GREATERT        reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
+    LESST           reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
+    NOTEQUAL        reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
+    DBEQUALS        reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
+    OR              reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
+    AND             reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
+    SEMICOLON       reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
+    TO              reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
+    RPAREN          reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
+    COMA            reduce using rule 40 (exp_aux2 -> term MINUS n_add_operator exp_aux2 n_gen_term .)
 
 
 state 156
+
+    (42) term -> factor MULTIPLY n_add_operator term n_gen_factor .
+
+    PLUS            reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    MINUS           reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    GREATERT        reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    LESST           reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    NOTEQUAL        reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    DBEQUALS        reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    OR              reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    AND             reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    SEMICOLON       reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    TO              reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    RPAREN          reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+    COMA            reduce using rule 42 (term -> factor MULTIPLY n_add_operator term n_gen_factor .)
+
+
+state 157
+
+    (43) term -> factor DIVIDE n_add_operator term n_gen_factor .
+
+    PLUS            reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    MINUS           reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    GREATERT        reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    LESST           reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    NOTEQUAL        reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    DBEQUALS        reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    OR              reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    AND             reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    SEMICOLON       reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    TO              reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    RPAREN          reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+    COMA            reduce using rule 43 (term -> factor DIVIDE n_add_operator term n_gen_factor .)
+
+
+state 158
+
+    (59) for -> FOR asignacion TO CTEINT LBRACKET estatuto . RBRACKET
+
+    RBRACKET        shift and go to state 163
+
+
+state 159
+
+    (60) while -> WHILE LPAREN expresion RPAREN LBRACKET estatuto . RBRACKET
+
+    RBRACKET        shift and go to state 164
+
+
+state 160
 
     (9) vars_func -> ID n_seen_var_name COLON tipo . n_set_var_type COMA vars_func
     (10) vars_func -> ID n_seen_var_name COLON tipo . n_set_var_type
@@ -2490,16 +2570,16 @@ state 156
     COMA            reduce using rule 71 (n_set_var_type -> .)
     RPAREN          reduce using rule 71 (n_set_var_type -> .)
 
-    n_set_var_type                 shift and go to state 161
+    n_set_var_type                 shift and go to state 165
 
-state 157
+state 161
 
     (61) condicion -> IF LPAREN expresion RPAREN bloque ELSE bloque .
 
     SEMICOLON       reduce using rule 61 (condicion -> IF LPAREN expresion RPAREN bloque ELSE bloque .)
 
 
-state 158
+state 162
 
     (18) bloque -> LBRACKET estatuto_aux RBRACKET .
 
@@ -2507,30 +2587,30 @@ state 158
     SEMICOLON       reduce using rule 18 (bloque -> LBRACKET estatuto_aux RBRACKET .)
 
 
-state 159
+state 163
 
     (59) for -> FOR asignacion TO CTEINT LBRACKET estatuto RBRACKET .
 
     SEMICOLON       reduce using rule 59 (for -> FOR asignacion TO CTEINT LBRACKET estatuto RBRACKET .)
 
 
-state 160
+state 164
 
     (60) while -> WHILE LPAREN expresion RPAREN LBRACKET estatuto RBRACKET .
 
     SEMICOLON       reduce using rule 60 (while -> WHILE LPAREN expresion RPAREN LBRACKET estatuto RBRACKET .)
 
 
-state 161
+state 165
 
     (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type . COMA vars_func
     (10) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type .
 
-    COMA            shift and go to state 162
+    COMA            shift and go to state 166
     RPAREN          reduce using rule 10 (vars_func -> ID n_seen_var_name COLON tipo n_set_var_type .)
 
 
-state 162
+state 166
 
     (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA . vars_func
     (9) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
@@ -2538,9 +2618,9 @@ state 162
 
     ID              shift and go to state 113
 
-    vars_func                      shift and go to state 163
+    vars_func                      shift and go to state 167
 
-state 163
+state 167
 
     (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func .
 

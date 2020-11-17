@@ -1,7 +1,6 @@
 import ply.lex
 import ply.yacc
 import sys
-from cubosem import *
 
 ############### LEXER ###############
 
@@ -112,6 +111,249 @@ def t_error(t):
     #     t.value[0], t.lineno))
     print('Scanner error ', t)
     t.lexer.skip(1)
+
+
+############### CUBO SEMANTICO ###############
+
+def return_type_cubo(left_oper,right_oper,operator):
+    return cubo_semantico[left_oper][right_oper][operator]
+cubo_semantico = {
+   'int':{
+        'int':{
+            '+': 'int',
+            '-': 'int',
+            '/': 'int',
+            '*': 'int',
+            '<': 'bool',
+            '>': 'bool',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'bool',
+            '>=': 'bool'
+        },
+        'float':{
+            '+': 'float',
+            '-': 'float',
+            '/': 'float',
+            '*': 'float',
+            '<': 'bool',
+            '>': 'bool',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'bool',
+            '>=': 'bool'
+
+        },
+        'bool':{
+            '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+
+        },
+        'char':{
+            '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+
+        }
+    },
+    'float':{
+        'int':{
+            '+': 'float',
+            '-': 'float',
+            '/': 'float',
+            '*': 'float',
+            '<': 'bool',
+            '>': 'bool',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'bool',
+            '>=': 'bool'
+        },
+        'float':{
+            '+': 'float',
+            '-': 'float',
+            '/': 'float',
+            '*': 'float',
+            '<': 'bool',
+            '>': 'bool',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'bool',
+            '>=': 'bool'
+        },
+        'bool':{
+            '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+        },
+        'char':{
+            '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+        }
+    },
+    'bool':{
+        'int':{
+           '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+        },
+        'float':{
+           '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+        },
+        'bool':{
+            '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'bool',
+            '>': 'bool',
+            '&': 'bool',
+            '|': 'bool',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+        },
+        'char':{
+            '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '<>': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+        }
+    },
+    'char':{
+        'int':{
+            '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+        },
+        'float':{
+            '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+        },
+        'bool':{
+             '+': 'err',
+            '-': 'err',
+            '/': 'err',
+            '*': 'err',
+            '<': 'err',
+            '>': 'err',
+            '&': 'err',
+            '|': 'err',
+            '<>': 'bool',
+            '==': 'bool',
+            '<=': 'err',
+            '>=': 'err'
+        },
+        'char':{
+            '+': 'char',
+            '-': 'char',
+            '/': 'char',
+            '*': 'char',
+            '<': 'bool',
+            '>': 'bool',
+            '&': 'err',
+            '|': 'err',
+            '!=': 'bool',
+            '==': 'bool',
+            '<=': 'bool',
+            '>=': 'bool'
+        }
+    }
+}
 
 ############### ESTRUCTURAS ###############
 
@@ -236,14 +478,14 @@ def p_exp_aux(p):
 
 
 def p_exp_aux2(p):
-    '''exp_aux2 : term  PLUS n_add_operator exp_aux2
-                | term  MINUS n_add_operator exp_aux2
+    '''exp_aux2 : term PLUS n_add_operator exp_aux2 n_gen_term
+                | term MINUS n_add_operator exp_aux2 n_gen_term
                 | term'''
 
 
 def p_term(p):
-    '''term : factor MULTIPLY n_add_operator term
-            | factor DIVIDE n_add_operator term
+    '''term : factor MULTIPLY n_add_operator term n_gen_factor
+            | factor DIVIDE n_add_operator term n_gen_factor
             | factor'''
 
 
@@ -493,24 +735,24 @@ def p_n_add_operator(p):
     pila_operadores.append(p[-1])
 
 
-# def p_n_gen_term(p):
-#     'n_gen_term : '
-#     operator_ident(['+','-'])
+def p_n_gen_term(p):
+    'n_gen_term : '
+    operator_ident(['+','-'])
 
-# def p_n_gen_factor(p):
-#     'n_gen_factor : '
-#     operator_ident(['*','/'])
+def p_n_gen_factor(p):
+    'n_gen_factor : '
+    operator_ident(['*','/'])
 
 #Funcion para poder generar cuadruplos
 def operator_ident(ops):
     global pila_operadores, pila_tipos, cuadruplos, current_type
     if pila_operadores[-1] in ops:
-        right_operand = pila_operadores.pop()
+        right_operand = pila_operandos.pop()
         right_type =  pila_tipos.pop()
-        left_operand = pila_operadores.pop()
+        left_operand = pila_operandos.pop()
         left_type =  pila_tipos.pop()
         operator = pila_operadores.pop()
-        result_type = cubosem.cubo_semantico[left_type,right_type,operator]
+        result_type = return_type_cubo(left_type,right_type,operator)
         if result_type != 'err':
             current_type = result_type
             result = get_next_var_address()
@@ -518,9 +760,7 @@ def operator_ident(ops):
             pila_operandos.append(result)
             pila_tipos.append(result_type)
         else: 
-            error('Error en el cuadruplo')
-
-
+            error('Error en el cuadruplo')  
 
 ############### EJECUCION ###############
 
