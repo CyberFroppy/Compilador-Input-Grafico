@@ -85,3 +85,5 @@ Se corrigieron y completaron todas las reglas de parseo asi como se creo la tabl
 ### Avance 5
 Se termino la tabla de variables locales y globales y puntos neuralgicos para guarda cada una de esta asi como las funciones.
 
+### Avance 6 
+Se agrego la constante char, ademas de que se termino la tabla de constantes y se iniciaron los cuadruplos teniendo un error al generarlos

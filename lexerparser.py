@@ -1,6 +1,7 @@
 import ply.lex
 import ply.yacc
 import sys
+from cubosem import *
 
 ############### LEXER ###############
 
@@ -52,6 +53,8 @@ tokens = [
     'CTESTRING',
     'CTEINT',
     'CTEF',
+    'CTEC'
+    # Agregando CTEC
 ] + list(reserved.values())
 
 t_COLON = r':'
@@ -76,6 +79,8 @@ t_DIVIDE = r'/'
 t_CTESTRING = r'".*"'
 t_CTEINT = r'[1-9][0-9]*'
 t_CTEF = r'[1-9][0-9]*\.[0-9]'
+#Agregando constante
+t_CTEC = r'(\'[^\']*\')'
 
 # Ignorar tabuladores y espacios
 t_ignore = ' \t'
@@ -120,6 +125,7 @@ symbol_table = {
     }
 }
 
+constant_table = {}
 next_constant_int = 0
 next_constant_float = 1000
 next_constant_char = 2000
@@ -129,7 +135,6 @@ next_local_char = 5000
 next_global_int = 6000
 next_global_float = 7000
 next_global_char = 8000
-constant_table = {}
 
 
 cuadruplos = []
@@ -177,8 +182,9 @@ def p_vars_func(p):
 
 def p_tipo(p):
     '''tipo : INT n_seen_type
-            | FLOAT n_seen_type'''
-
+            | FLOAT n_seen_type
+            | CHAR n_seen_type'''
+        # Agregando char
 
 def p_bloque_module(p):
     '''bloque_module : LBRACKET vars estatuto_aux RBRACKET
@@ -230,22 +236,24 @@ def p_exp_aux(p):
 
 
 def p_exp_aux2(p):
-    '''exp_aux2 : term PLUS exp_aux2
-                | term MINUS exp_aux2
+    '''exp_aux2 : term  PLUS n_add_operator exp_aux2
+                | term  MINUS n_add_operator exp_aux2
                 | term'''
 
 
 def p_term(p):
-    '''term : factor MULTIPLY term
-            | factor DIVIDE term
+    '''term : factor MULTIPLY n_add_operator term
+            | factor DIVIDE n_add_operator term
             | factor'''
 
 
 def p_factor(p):
     '''factor : LPAREN expresion RPAREN
               | CTEINT n_seen_factor_int
-              | CTEF 
+              | CTEF n_seen_factor_float
+              | CTEC n_seen_factor_char
               | ID n_seen_factor_id'''
+            #   Se agrego CTEC a factor
 
 
 def p_module(p):
@@ -342,29 +350,65 @@ def p_n_seen_func_name(p):
     }
     current_func = p[-1]
 
+
 def get_next_var_address():
     global current_func, current_type, next_global_int, next_global_float, next_global_char,next_local_int, next_local_float, next_local_char
+    aux = 0
     if current_func == '#global':
         if current_type == 'int':
+            if next_global_int > 6999: 
+                error('Exceso de variables')
             aux = next_global_int
             next_global_int += 1
         elif current_type == 'float':
+            if next_global_float > 7999: 
+                error('Exceso de variables')
             aux = next_global_float
             next_global_float += 1
         elif current_type == 'char':
+            if next_global_char > 8999: 
+                error('Exceso de variables')
             aux = next_global_char
             next_global_char += 1
     else:
         if current_type == 'int':
+            if next_local_int > 3999: 
+                error('Exceso de variables')
             aux = next_local_int
             next_local_int += 1
         elif current_type == 'float':
+            if next_local_float > 4999: 
+                error('Exceso de variables')
             aux = next_local_float
             next_local_float += 1
         elif current_type == 'char':
+            if next_local_char > 5999: 
+                error('Exceso de variables')
             aux = next_local_char
             next_local_char += 1
     return aux
+
+#Funcion para agregar las direcciones a las constantes
+def get_next_const_address(constant_type):
+    global current_type,constant_table, next_constant_int, next_constant_float, next_constant_char
+    aux = 0
+    if constant_type == 'int':
+        if next_constant_int > 999: 
+                error('Exceso de constantes')
+        aux = next_constant_int
+        next_constant_int += 1
+    elif constant_type == 'float':
+        if next_constant_float > 1999: 
+                error('Exceso de constantes')
+        aux = next_constant_float
+        next_constant_float += 2
+    elif constant_type == 'char':
+        if next_constant_char > 2999: 
+                error('Exceso de constantes')
+        aux = next_constant_char
+        next_constant_char += 1
+    return aux
+
 
 def p_n_set_var_type(p):
     'n_set_var_type : '
@@ -374,27 +418,108 @@ def p_n_set_var_type(p):
         'address': get_next_var_address()
     }
 
-def search(id):
+
+def search_type(id):
     global symbol_table, current_func
     if id in symbol_table[current_func]['vars']:
         return symbol_table[current_func]['vars'][id]['type']
     elif id in symbol_table['#global']['vars']:
         return symbol_table['#global']['vars'][id]['type']
     else:
-        error('No se encontró la viarable ' + id)
+        error('No se encontró la variable ' + id)
 
+
+#Funcion para comprobar que no se repite un ID 
+def search_address(id):
+    global symbol_table, current_func
+    if id in symbol_table[current_func]['vars']:
+        return symbol_table[current_func]['vars'][id]['address']
+    elif id in symbol_table['#global']['vars']:
+        return symbol_table['#global']['vars'][id]['address']
+    else:
+        error('No se encontró el address de la variable ' + id)
+
+#Funcion para poder agregar a sus respectivas pilas los operandos y los tipos
 def p_n_seen_factor_id(p):
     'n_seen_factor_id : '
     global pila_operandos, pila_tipos
-    pila_operandos.append(p[-1])
-    pila_tipos.append(search(p[-1]))
+    pila_operandos.append(search_address(p[-1]))
+    pila_tipos.append(search_type(p[-1]))
+
 
 def p_n_seen_factor_int(p):
     'n_seen_factor_int : '
-    global pila_operandos, pila_tipos
+    global pila_operandos, pila_tipos, constant_table, next_constant_int
     ### asignar la dirección constante
-    pila_operandos.append(p[-1])
+    if (p[-1] not in constant_table):
+        constant_table[p[-1]] = { 
+            'address': get_next_const_address('int'),
+            'type': 'int'
+        }
+    pila_operandos.append(constant_table[p[-1]]['address'])
     pila_tipos.append('int')
+
+
+#Agregando punto neuralgico para los tipos float
+def p_n_seen_factor_float(p):
+    'n_seen_factor_float : '
+    global pila_operandos, pila_tipos, constant_table, next_constant_float 
+    if (p[-1] not in constant_table):
+        constant_table[p[-1]] = { 
+            'address': get_next_const_address('float'),
+            'type' : 'float'
+        }
+    pila_operandos.append(constant_table[p[-1]]['address'])
+    pila_tipos.append('float')
+
+
+#Agregando punto neuralgico para los tipos char
+def p_n_seen_factor_char(p):
+    'n_seen_factor_char : '
+    global pila_operandos, pila_tipos, constant_table, next_constant_char
+    if (p[-1] not in constant_table):
+        constant_table[p[-1]] = { 
+            'address': get_next_const_address('char'),
+            'type' : 'char'
+        }
+    pila_operandos.append(constant_table[p[-1]]['address'])
+    pila_tipos.append('char')
+
+
+#Funcion para agregar los operadores a la pila de operadores
+def p_n_add_operator(p):
+    'n_add_operator : '
+    global pila_operadores
+    pila_operadores.append(p[-1])
+
+
+# def p_n_gen_term(p):
+#     'n_gen_term : '
+#     operator_ident(['+','-'])
+
+# def p_n_gen_factor(p):
+#     'n_gen_factor : '
+#     operator_ident(['*','/'])
+
+#Funcion para poder generar cuadruplos
+def operator_ident(ops):
+    global pila_operadores, pila_tipos, cuadruplos, current_type
+    if pila_operadores[-1] in ops:
+        right_operand = pila_operadores.pop()
+        right_type =  pila_tipos.pop()
+        left_operand = pila_operadores.pop()
+        left_type =  pila_tipos.pop()
+        operator = pila_operadores.pop()
+        result_type = cubosem.cubo_semantico[left_type,right_type,operator]
+        if result_type != 'err':
+            current_type = result_type
+            result = get_next_var_address()
+            cuadruplos.append([operator, left_operand, right_operand, result])
+            pila_operandos.append(result)
+            pila_tipos.append(result_type)
+        else: 
+            error('Error en el cuadruplo')
+
 
 
 ############### EJECUCION ###############
