@@ -21,5 +21,6 @@ Variables
         char
             8000 - 8999
 
-Se registra la direccion de la segunda constante repetida. 
-Hacer print a un mensaje cuando se llenan las direcciones
+Se cambio en el cubo semantico a tener dos && en lugar de uno, el or solo quedo en uno | 
+Error en expresiones de condicionales, test.txt linea 14 
+Ya se pueden realizar operaciones aritmeticas.

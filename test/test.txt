@@ -7,18 +7,14 @@ module int func (hola:int) {
   hola = aux2;
 }
 
-module int func2 (hola2:int) {
-  var pepe2: int.
-  
-  hola2 = aux2;
-}
-
 main {
   aux1 = 39;
   aux4 = 'ded';
+  aux3 = 1 + aux3 * 3 / 4.0 * (aux2 + 6) / 10;
   if (5 < 1) {
-     aux3 = 1*2/4.0;
+     aux3 = 1 + aux3 * 3 / 4.0 * (aux2 + 6) / 10;
   } else {
     aux2 = 2+3-2;
   };
+  
 }
