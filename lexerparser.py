@@ -65,7 +65,7 @@ t_DBEQUALS = r'=='
 t_NOTEQUAL = r'\!='  # revisar Regex
 t_GREATERT = r'>'
 t_LESST = r'<'
-t_AND = r'&'  # Revisar Regex
+t_AND = r'&&'  # Revisar Regex
 t_OR = r'\|'  # Revisar Regex
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
@@ -126,7 +126,7 @@ cubo_semantico = {
             '*': 'int',
             '<': 'bool',
             '>': 'bool',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -140,7 +140,7 @@ cubo_semantico = {
             '*': 'float',
             '<': 'bool',
             '>': 'bool',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -155,7 +155,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -170,7 +170,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -187,7 +187,7 @@ cubo_semantico = {
             '*': 'float',
             '<': 'bool',
             '>': 'bool',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -201,7 +201,7 @@ cubo_semantico = {
             '*': 'float',
             '<': 'bool',
             '>': 'bool',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -215,7 +215,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -229,7 +229,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -245,7 +245,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -259,7 +259,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -273,7 +273,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'bool',
             '>': 'bool',
-            '&': 'bool',
+            '&&': 'bool',
             '|': 'bool',
             '!=': 'bool',
             '==': 'bool',
@@ -287,7 +287,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '<>': 'bool',
             '==': 'bool',
@@ -303,7 +303,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -317,7 +317,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -331,7 +331,7 @@ cubo_semantico = {
             '*': 'err',
             '<': 'err',
             '>': 'err',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '<>': 'bool',
             '==': 'bool',
@@ -345,7 +345,7 @@ cubo_semantico = {
             '*': 'char',
             '<': 'bool',
             '>': 'bool',
-            '&': 'err',
+            '&&': 'err',
             '|': 'err',
             '!=': 'bool',
             '==': 'bool',
@@ -383,6 +383,8 @@ cuadruplos = []
 pila_operadores = []
 pila_operandos = []
 pila_tipos = []
+pila_saltos = [] 
+contador = 0
 
 def print_todo():
     print('tabla de simbolo: ', symbol_table)
@@ -407,7 +409,7 @@ def p_programa(p):
 
 
 def p_main(p):
-    '''main : MAIN bloque_module'''
+    '''main : MAIN n_seen_func_name bloque_module'''
 
 
 def p_vars(p):
@@ -460,37 +462,37 @@ def p_asignacion(p):
 
 
 def p_expresion(p):
-    '''expresion : exp AND expresion
-                 | exp'''
+    '''expresion : exp n_gen_and AND n_add_operator expresion
+                 | exp n_gen_and '''
 
 
 def p_exp(p):
-    '''exp : exp_aux OR exp
-           | exp_aux '''
+    '''exp : exp_aux n_gen_or OR n_add_operator exp
+           | exp_aux n_gen_or '''
 
 
 def p_exp_aux(p):
-    '''exp_aux : exp_aux2 GREATERT exp_aux2
-               | exp_aux2 LESST exp_aux2
-               | exp_aux2 NOTEQUAL exp_aux2
-               | exp_aux2 DBEQUALS exp_aux2
-               | exp_aux2'''
+    '''exp_aux : exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux2
+               | exp_aux2 n_gen_relational LESST n_add_operator exp_aux2
+               | exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux2
+               | exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux2
+               | exp_aux2 n_gen_relational '''
 
 
 def p_exp_aux2(p):
-    '''exp_aux2 : term PLUS n_add_operator exp_aux2 n_gen_term
-                | term MINUS n_add_operator exp_aux2 n_gen_term
-                | term'''
+    '''exp_aux2 : term n_gen_term PLUS n_add_operator exp_aux2 
+                | term n_gen_term MINUS n_add_operator exp_aux2
+                | term n_gen_term'''
 
 
 def p_term(p):
-    '''term : factor MULTIPLY n_add_operator term n_gen_factor
-            | factor DIVIDE n_add_operator term n_gen_factor
-            | factor'''
+    '''term : factor n_gen_factor MULTIPLY n_add_operator term 
+            | factor n_gen_factor DIVIDE n_add_operator term 
+            | factor n_gen_factor'''
 
 
 def p_factor(p):
-    '''factor : LPAREN expresion RPAREN
+    '''factor : LPAREN n_push_fake_bottom expresion RPAREN n_pop_fake_bottom
               | CTEINT n_seen_factor_int
               | CTEF n_seen_factor_float
               | CTEC n_seen_factor_char
@@ -525,8 +527,8 @@ def p_while(p):
 
 
 def p_condicion(p):
-    '''condicion : IF LPAREN expresion RPAREN bloque ELSE bloque
-                 | IF LPAREN expresion RPAREN bloque'''
+    '''condicion : IF LPAREN expresion RPAREN n_check_exp bloque ELSE n_else bloque n_fill_end
+                 | IF LPAREN expresion RPAREN n_check_exp bloque n_fill_end'''
 
 
 def p_escritura(p):
@@ -734,33 +736,93 @@ def p_n_add_operator(p):
     global pila_operadores
     pila_operadores.append(p[-1])
 
-
+# Punto neuralgico para los operadores de suma y resta
 def p_n_gen_term(p):
     'n_gen_term : '
     operator_ident(['+','-'])
 
+# Punto neuralgico para los operadores de multiplicacion y division
 def p_n_gen_factor(p):
     'n_gen_factor : '
     operator_ident(['*','/'])
 
+def p_n_gen_relational(p):
+    'n_gen_relational : '
+    operator_ident(['>', '<', '!=', '=='])
+
+def p_n_gen_or(p):
+    'n_gen_or : '
+    operator_ident(['|'])
+
+def p_n_gen_and(p):
+    'n_gen_and : '
+    operator_ident('&&')
+
+def p_n_push_fake_bottom(p):
+    'n_push_fake_bottom : '
+    global pila_operadores
+    pila_operadores.append('(')
+
+def p_n_pop_fake_bottom(p):
+    'n_pop_fake_bottom : '
+    global pila_operadores
+    top = pila_operadores.pop()
+    if top != '(':
+        error('n_pop_fake_bottom')
+
 #Funcion para poder generar cuadruplos
 def operator_ident(ops):
     global pila_operadores, pila_tipos, cuadruplos, current_type
-    if pila_operadores[-1] in ops:
-        right_operand = pila_operandos.pop()
-        right_type =  pila_tipos.pop()
-        left_operand = pila_operandos.pop()
-        left_type =  pila_tipos.pop()
-        operator = pila_operadores.pop()
-        result_type = return_type_cubo(left_type,right_type,operator)
-        if result_type != 'err':
-            current_type = result_type
-            result = get_next_var_address()
-            cuadruplos.append([operator, left_operand, right_operand, result])
-            pila_operandos.append(result)
-            pila_tipos.append(result_type)
-        else: 
-            error('Error en el cuadruplo')  
+    if len(pila_operadores) > 0:
+        if pila_operadores[-1] in ops:
+            right_operand = pila_operandos.pop()
+            right_type =  pila_tipos.pop()
+            left_operand = pila_operandos.pop()
+            left_type =  pila_tipos.pop()
+            operator = pila_operadores.pop()
+            result_type = return_type_cubo(left_type,right_type,operator)
+            if result_type != 'err':
+                current_type = result_type
+                result = get_next_var_address()
+                cuadruplos.append([operator, left_operand, right_operand, result])
+                pila_operandos.append(result)
+                pila_tipos.append(result_type)
+            else: 
+                error('Error en el cuadruplo')  
+
+# 1 - Punto neuralgico para revisar que la expresion tenga un valor bool y genera el cuadruplo GotoF
+def p_n_check_exp(p):
+    '''n_check_exp : '''
+    global pila_operadores, contador, pila_tipos, pila_saltos, cuadruplos, current_type
+    exp_type = pila_tipos.pop()
+    print(exp_type)
+    if exp_type != 'bool':
+        error('Type Mismatch')
+    else:
+        result = pila_operandos.pop()
+        quad = ['GOTOF',result,'-',0]
+        cuadruplos.append(quad)
+        contador += 1 
+        pila_saltos.append(contador - 1)
+        
+# 2 - Punto neuralgico para completar el cuadruplo 
+def p_n_fill_end(p):
+    '''n_fill_end : '''
+    global pila_saltos, contador 
+    end = pila_saltos.pop()
+    cuadruplos[end][3] = contador
+
+# 3 - Punto neuralgico para crear el GOTO al else 
+def p_n_else(p):
+    '''n_else : '''
+    global pila_saltos, contador, cuadruplos
+    goto_aux = ['GOTO', '-', '-', 0]
+    contador += 1 
+    cuadruplos.append(goto_aux)
+    false = pila_saltos.pop()
+    pila_saltos.append(contador - 1)
+    cuadruplos[false][3] = contador
+
 
 ############### EJECUCION ###############
 
@@ -779,9 +841,6 @@ if __name__ == '__main__':
     program_name = sys.argv[1]
 
     with open(program_name, 'r') as file:
-        try:
-            parser.parse(file.read())
-            print('FINISHED')
-            print_todo()
-        except:
-            pass
+        parser.parse(file.read())
+        print('FINISHED')
+        print_todo()
