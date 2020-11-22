@@ -87,3 +87,6 @@ Se termino la tabla de variables locales y globales y puntos neuralgicos para gu
 
 ### Avance 6 
 Se agrego la constante char, ademas de que se termino la tabla de constantes y se iniciaron los cuadruplos teniendo un error al generarlos
+
+### Avance 7 
+En el avance 7 se trabajaron los cuadruplos de decision y de ciclos, tambien se trabajo en la documentacion del compilador.
