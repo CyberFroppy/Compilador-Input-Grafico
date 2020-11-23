@@ -21,6 +21,6 @@ Variables
         char
             8000 - 8999
 
-Se cambio en el cubo semantico a tener dos && en lugar de uno, el or solo quedo en uno | 
-Error en expresiones de condicionales, test.txt linea 14 
-Ya se pueden realizar operaciones aritmeticas.
+Modificar cubo. 
+Generar quad de asignacion, lectura, escritura. 
+

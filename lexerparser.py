@@ -458,7 +458,7 @@ def p_estatuto(p):
 
 
 def p_asignacion(p):
-    'asignacion : ID EQUAL expresion'
+    'asignacion : ID n_seen_factor_id EQUAL expresion n_assign'
 
 
 def p_expresion(p):
@@ -472,10 +472,10 @@ def p_exp(p):
 
 
 def p_exp_aux(p):
-    '''exp_aux : exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux2
-               | exp_aux2 n_gen_relational LESST n_add_operator exp_aux2
-               | exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux2
-               | exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux2
+    '''exp_aux : exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux
+               | exp_aux2 n_gen_relational LESST n_add_operator exp_aux
+               | exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
+               | exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux
                | exp_aux2 n_gen_relational '''
 
 
@@ -729,6 +729,17 @@ def p_n_seen_factor_char(p):
     pila_operandos.append(constant_table[p[-1]]['address'])
     pila_tipos.append('char')
 
+def p_n_assign(p):
+    'n_assign : '
+    global pila_operandos, pila_tipos, cuadruplos
+    result_tipo = pila_tipos.pop()
+    result = pila_operandos.pop()
+    id_tipo = pila_tipos.pop()
+    id = pila_operandos.pop()
+    if True:
+        cuadruplos.append(['=',result,'-',id])
+    else: 
+        error('Type Mismatch')
 
 #Funcion para agregar los operadores a la pila de operadores
 def p_n_add_operator(p):
@@ -756,7 +767,7 @@ def p_n_gen_or(p):
 
 def p_n_gen_and(p):
     'n_gen_and : '
-    operator_ident('&&')
+    operator_ident(['&&'])
 
 def p_n_push_fake_bottom(p):
     'n_push_fake_bottom : '
@@ -800,7 +811,7 @@ def p_n_check_exp(p):
         error('Type Mismatch')
     else:
         result = pila_operandos.pop()
-        quad = ['GOTOF',result,'-',0]
+        quad = ['GOTOF',result,'-','-']
         cuadruplos.append(quad)
         contador += 1 
         pila_saltos.append(contador - 1)
