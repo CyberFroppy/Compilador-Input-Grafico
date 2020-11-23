@@ -4,15 +4,15 @@ var aux1: float; aux2: float; aux3: int; aux4: char.
 module int func (hola:int) {
   var pepe: float.
   
-  hola = aux2;
+  hola = aux3;
 }
 
 main {
-  aux1 = 39;
+  aux1 = 39.0;
   aux4 = 'ded';
-  aux3 = 1 + aux3 * 3 / 4.0 * (aux2 + 6) / 10;
+  aux3 = 1 * 10;
   if (5.1 <= 1.3) {
-     aux3 = 1 + aux3 * 3 / 4.0 * (aux2 + 6) / 10;
+     aux3 = 1 * 10;
   } else {
     aux2 = 2+3-2;
   };

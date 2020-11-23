@@ -157,7 +157,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'bool',
             '>=': 'bool',
-            '=': True
+            '=': False
 
         },
         'bool':{
@@ -173,7 +173,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
 
         },
         'char':{
@@ -189,7 +189,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
 
         }
     },
@@ -237,7 +237,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
         },
         'char':{
             '+': 'err',
@@ -252,7 +252,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
         }
     },
     'bool':{
@@ -269,7 +269,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
         },
         'float':{
            '+': 'err',
@@ -284,7 +284,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
         },
         'bool':{
             '+': 'err',
@@ -314,7 +314,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
         }
     },
     'char':{
@@ -331,7 +331,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
         },
         'float':{
             '+': 'err',
@@ -346,7 +346,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
         },
         'bool':{
              '+': 'err',
@@ -361,7 +361,7 @@ cubo_semantico = {
             '==': 'bool',
             '<=': 'err',
             '>=': 'err',
-            '=': True
+            '=': False
         },
         'char':{
             '+': 'char',
@@ -485,7 +485,7 @@ def p_estatuto(p):
 
 
 def p_asignacion(p):
-    'asignacion : ID n_seen_factor_id EQUAL expresion n_assign'
+    'asignacion : ID n_seen_factor_id EQUAL n_add_operator expresion n_assign'
 
 
 def p_expresion(p):
@@ -761,15 +761,17 @@ def p_n_seen_factor_char(p):
 # Generacion del cuadruplo de asignacion 
 def p_n_assign(p):
     'n_assign : '
-    global pila_operandos, pila_tipos, cuadruplos
+    global pila_operandos, pila_tipos, cuadruplos, pila_operadores
     result_tipo = pila_tipos.pop()
     result = pila_operandos.pop()
     id_tipo = pila_tipos.pop()
     id = pila_operandos.pop()
-    if True:
+    equal_operator = pila_operadores.pop()
+    result_type = return_type_cubo(id_tipo,result_tipo,'=')
+    if result_type == True and equal_operator == '=':
         cuadruplos.append(['=',result,'-',id])
     else: 
-        error('Type Mismatch')
+        error('Type Mismatch {} type could not assign {} type'.format(id_tipo,result_tipo))
 
 #Funcion para agregar los operadores a la pila de operadores
 def p_n_add_operator(p):
