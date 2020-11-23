@@ -21,6 +21,16 @@ Variables
         char
             8000 - 8999
 
+Lunes ''''''
 Modificar cubo. 
-Generar quad de asignacion, lectura, escritura. 
+Generar quad de lectura, escritura. 
+Generar cuad while 30% 
+Generar cuad for 0%
 
+Martes ''''' 
+Generar cuad de funciones. 0%
+Generar ERA () 0%
+Maquina virtual
+
+Tentativo
+Arreglos 

@@ -848,14 +848,14 @@ def p_n_check_exp(p):
         quad = ['GOTOF',result,'-',0]
         cuadruplos.append(quad)
         contador += 1 
-        pila_saltos.append(contador - 1)
+        pila_saltos.append(len(cuadruplos)-1)
         
 # 2 - Punto neuralgico para completar el cuadruplo 
 def p_n_fill_end(p):
     '''n_fill_end : '''
     global pila_saltos, contador 
     end = pila_saltos.pop()
-    cuadruplos[end][3] = contador
+    cuadruplos[end][3] = len(cuadruplos)
 
 # 3 - Punto neuralgico para crear el GOTO al else 
 def p_n_else(p):
@@ -865,8 +865,8 @@ def p_n_else(p):
     contador += 1 
     cuadruplos.append(goto_aux)
     false = pila_saltos.pop()
-    pila_saltos.append(contador - 1)
-    cuadruplos[false][3] = contador
+    pila_saltos.append(len(cuadruplos)-1)
+    cuadruplos[false][3] = len(cuadruplos)
 
 
 ############### WHILE ###############
