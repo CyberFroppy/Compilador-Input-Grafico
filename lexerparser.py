@@ -28,8 +28,6 @@ reserved = {
 }
 # Token List
 tokens = [
-    'ID',
-    'COMMENT',
     'COLON',
     'SEMICOLON',
     'LBRACKET',
@@ -39,6 +37,8 @@ tokens = [
     'NOTEQUAL',
     'GREATERT',
     'LESST',
+    'GREATEREQUAL',
+    'LESSEQUAL',
     'AND',
     'OR',
     'LPAREN',
@@ -52,7 +52,12 @@ tokens = [
     'CTESTRING',
     'CTEINT',
     'CTEF',
-    'CTEC'
+    'CTEC',
+    'TRANSPUESTA',
+    'DETERMINANTE',
+    'INVERSA',
+    'ID',
+    'COMMENT'
     # Agregando CTEC
 ] + list(reserved.values())
 
@@ -65,6 +70,8 @@ t_DBEQUALS = r'=='
 t_NOTEQUAL = r'\!='  # revisar Regex
 t_GREATERT = r'>'
 t_LESST = r'<'
+t_GREATEREQUAL = r'\>='
+t_LESSEQUAL = r'\<='
 t_AND = r'&&'  # Revisar Regex
 t_OR = r'\|'  # Revisar Regex
 t_LPAREN = r'\('
@@ -80,7 +87,9 @@ t_CTEINT = r'[1-9][0-9]*'
 t_CTEF = r'[1-9][0-9]*\.[0-9]'
 #Agregando constante
 t_CTEC = r'(\'[^\']*\')'
-
+t_TRANSPUESTA = r'\¡'
+t_DETERMINANTE = r'\$'
+t_INVERSA = r'\?'
 # Ignorar tabuladores y espacios
 t_ignore = ' \t'
 
@@ -131,7 +140,9 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'bool',
-            '>=': 'bool'
+            '>=': 'bool',
+            '=': True
+            
         },
         'float':{
             '+': 'float',
@@ -145,7 +156,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'bool',
-            '>=': 'bool'
+            '>=': 'bool',
+            '=': True
 
         },
         'bool':{
@@ -160,7 +172,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
 
         },
         'char':{
@@ -175,7 +188,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
 
         }
     },
@@ -192,7 +206,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'bool',
-            '>=': 'bool'
+            '>=': 'bool',
+            '=': True
         },
         'float':{
             '+': 'float',
@@ -206,7 +221,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'bool',
-            '>=': 'bool'
+            '>=': 'bool',
+            '=': True
         },
         'bool':{
             '+': 'err',
@@ -220,7 +236,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
         },
         'char':{
             '+': 'err',
@@ -234,7 +251,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
         }
     },
     'bool':{
@@ -250,7 +268,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
         },
         'float':{
            '+': 'err',
@@ -264,7 +283,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
         },
         'bool':{
             '+': 'err',
@@ -278,7 +298,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
         },
         'char':{
             '+': 'err',
@@ -292,7 +313,8 @@ cubo_semantico = {
             '<>': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
         }
     },
     'char':{
@@ -308,7 +330,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
         },
         'float':{
             '+': 'err',
@@ -322,7 +345,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
         },
         'bool':{
              '+': 'err',
@@ -336,7 +360,8 @@ cubo_semantico = {
             '<>': 'bool',
             '==': 'bool',
             '<=': 'err',
-            '>=': 'err'
+            '>=': 'err',
+            '=': True
         },
         'char':{
             '+': 'char',
@@ -350,7 +375,8 @@ cubo_semantico = {
             '!=': 'bool',
             '==': 'bool',
             '<=': 'bool',
-            '>=': 'bool'
+            '>=': 'bool',
+            '=': True
         }
     }
 }
@@ -393,6 +419,7 @@ def print_todo():
     print('pila operandos: ', pila_operandos)
     print('pila tipos: ', pila_tipos)
     print('cuadruplos: ', cuadruplos)
+    print('pila de saltos: ', pila_saltos)
 
 ############### PARSER ###############
 
@@ -476,6 +503,8 @@ def p_exp_aux(p):
                | exp_aux2 n_gen_relational LESST n_add_operator exp_aux
                | exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
                | exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux
+               | exp_aux2 n_gen_relational GREATEREQUAL n_add_operator exp_aux
+               | exp_aux2 n_gen_relational LESSEQUAL n_add_operator exp_aux
                | exp_aux2 n_gen_relational '''
 
 
@@ -519,11 +548,11 @@ def p_return(p):
 
 
 def p_for(p):
-    '''for : FOR asignacion TO CTEINT LBRACKET estatuto RBRACKET'''
+    '''for : FOR asignacion TO CTEINT bloque'''
 
 
 def p_while(p):
-    '''while : WHILE LPAREN expresion RPAREN LBRACKET estatuto RBRACKET'''
+    '''while : WHILE  LPAREN expresion RPAREN  bloque '''
 
 
 def p_condicion(p):
@@ -729,6 +758,7 @@ def p_n_seen_factor_char(p):
     pila_operandos.append(constant_table[p[-1]]['address'])
     pila_tipos.append('char')
 
+# Generacion del cuadruplo de asignacion 
 def p_n_assign(p):
     'n_assign : '
     global pila_operandos, pila_tipos, cuadruplos
@@ -759,7 +789,7 @@ def p_n_gen_factor(p):
 
 def p_n_gen_relational(p):
     'n_gen_relational : '
-    operator_ident(['>', '<', '!=', '=='])
+    operator_ident(['>', '<', '!=', '==','>=','<='])
 
 def p_n_gen_or(p):
     'n_gen_or : '
@@ -801,17 +831,19 @@ def operator_ident(ops):
             else: 
                 error('Error en el cuadruplo')  
 
+
+############### IF ###############
+
 # 1 - Punto neuralgico para revisar que la expresion tenga un valor bool y genera el cuadruplo GotoF
 def p_n_check_exp(p):
     '''n_check_exp : '''
     global pila_operadores, contador, pila_tipos, pila_saltos, cuadruplos, current_type
     exp_type = pila_tipos.pop()
-    print(exp_type)
     if exp_type != 'bool':
         error('Type Mismatch')
     else:
         result = pila_operandos.pop()
-        quad = ['GOTOF',result,'-','-']
+        quad = ['GOTOF',result,'-',0]
         cuadruplos.append(quad)
         contador += 1 
         pila_saltos.append(contador - 1)
@@ -834,6 +866,40 @@ def p_n_else(p):
     pila_saltos.append(contador - 1)
     cuadruplos[false][3] = contador
 
+
+############### WHILE ###############
+
+# # 1 - Punto neuralgico para crer push en la pila de saltos while
+# def p_n_salto_while(p):
+#     '''n_salto_while :'''
+#     global pila_saltos, contador
+#     contador += 1
+#     pila_saltos.append(contador)
+
+# # 2 - Punto neuralgico para comprobar la condicion del while
+# def p_n_cond_while(p):
+#     '''n_cond_while :'''
+#     global pila_tipos, pila_operandos, cuadruplos, pila_saltos, contador
+#     exp_type = pila_tipos.pop()
+#     if exp_type != 'bool':
+#         error('Type Mismatch')
+#     else:
+#         result = pila_operandos.pop()
+#         quad = ['GOTOF',result,'-',0]
+#         contador += 1
+#         cuadruplos.append(quad)
+#         pila_saltos.append(contador - 1)
+
+# # 3 - Punto neuralgico para hacer return en el while
+# def p_n_ret_while(p):
+#     '''n_ret_while :'''
+#     global pila_saltos,contador
+#     end = pila_saltos.pop()
+#     ret = pila_saltos.pop()
+#     quad = ['GOTOF',ret,'-','-']
+#     contador += 1
+#     cuadruplos.append(quad)
+#     cuadruplos[end][3] = contador
 
 ############### EJECUCION ###############
 
