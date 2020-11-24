@@ -22,13 +22,15 @@ Variables
             8000 - 8999
 
 Lunes ''''''
-Generar quad de lectura, escritura. 
-Generar cuad while 30% 
+Generar quad de lectura, escritura.
 Generar cuad for 0%
 
 Martes ''''' 
 Generar cuad de funciones. 0%
+Generar cuad params 0%
+Generar caud return 0%
 Generar ERA () 0%
+Generar cuad end program 0%
 Maquina virtual 20%
 
 Tentativo
