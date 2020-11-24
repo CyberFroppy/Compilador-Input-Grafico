@@ -1,0 +1,14 @@
+program Ejemplowhile;
+var A: int; B: int; C: int; D: int.
+
+main {
+    A = 2;
+    B = 10;
+  while ( 5 > 3) {
+     D = B + A * C;
+     while ( 10 >= 3) { 
+         C = A - B;
+     };
+  }; 
+  
+}

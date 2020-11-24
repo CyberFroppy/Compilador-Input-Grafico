@@ -914,10 +914,10 @@ def p_n_cond_while(p):
 # 3 - Punto neuralgico para hacer return en el while
 def p_n_ret_while(p):
     '''n_ret_while :'''
-    global pila_saltos,contador
+    global pila_saltos
     end = pila_saltos.pop()
     ret = pila_saltos.pop()
-    quad = ['GOTOF',ret,'-','-']
+    quad = ['GOTO','-','-',ret]
     cuadruplos.append(quad)
     cuadruplos[end][3] = len(cuadruplos)
 

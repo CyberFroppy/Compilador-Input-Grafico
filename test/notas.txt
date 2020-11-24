@@ -29,7 +29,7 @@ Generar cuad for 0%
 Martes ''''' 
 Generar cuad de funciones. 0%
 Generar ERA () 0%
-Maquina virtual
+Maquina virtual 20%
 
 Tentativo
 Arreglos 
