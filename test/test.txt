@@ -9,4 +9,3 @@ main {
   print("hola");
   print("mundo");
 }
-end

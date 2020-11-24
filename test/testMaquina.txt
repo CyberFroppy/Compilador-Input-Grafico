@@ -1,0 +1,11 @@
+program Ejemploif;
+var A: int; B: int; C: int; D: int.
+
+main {
+
+  A = 8-7;
+  B = 6+5;
+  C = 4/2;
+  D = 2*6;
+  print(A,B,C,D,A+B+C+D);
+}
