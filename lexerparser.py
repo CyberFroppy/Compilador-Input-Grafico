@@ -486,11 +486,12 @@ def p_estatuto(p):
     '''estatuto : asignacion SEMICOLON
                 | condicion SEMICOLON
                 | escritura SEMICOLON
+                | lectura SEMICOLON
                 | return SEMICOLON
                 | for SEMICOLON
                 | while SEMICOLON
                 | call_module SEMICOLON
-                | lectura SEMICOLON'''
+                '''
 
 
 def p_asignacion(p):
@@ -577,7 +578,7 @@ def p_lectura_aux(p):
                 | ID n_read COMA lect_aux'''
 
 def p_escritura(p):
-    'escritura : PRINT LPAREN escritura_aux RPAREN SEMICOLON'
+    'escritura : PRINT LPAREN escritura_aux RPAREN'
 
 
 def p_escritura_aux(p):
