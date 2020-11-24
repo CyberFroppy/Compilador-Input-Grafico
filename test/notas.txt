@@ -22,7 +22,6 @@ Variables
             8000 - 8999
 
 Lunes ''''''
-Modificar cubo. 
 Generar quad de lectura, escritura. 
 Generar cuad while 30% 
 Generar cuad for 0%

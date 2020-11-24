@@ -1,0 +1,17 @@
+program Ejemploif;
+var A: int; B: int; C: int; D: int.
+
+main {
+
+  if ( A + B > D) {
+     if (A < D ){
+         A = 0;
+         B = B + D;
+     } else {
+         C = A + B;
+     };
+  } else {
+    A = B + C;
+  };
+  D = B + A * C;
+}

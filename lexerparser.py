@@ -1,7 +1,7 @@
 import ply.lex
 import ply.yacc
 import sys
-
+import pprint
 ############### LEXER ###############
 
 # Reserved words
@@ -83,8 +83,8 @@ t_MINUS = r'-'
 t_MULTIPLY = r'\*'
 t_DIVIDE = r'/'
 t_CTESTRING = r'".*"'
-t_CTEINT = r'[1-9][0-9]*'
-t_CTEF = r'[1-9][0-9]*\.[0-9]'
+t_CTEINT = r'[0-9][0-9]*'
+t_CTEF = r'[0-9][0-9]*\.[0-9]'
 #Agregando constante
 t_CTEC = r'(\'[^\']*\')'
 t_TRANSPUESTA = r'\¡'
@@ -405,7 +405,9 @@ next_global_float = 7000
 next_global_char = 8000
 
 
-cuadruplos = []
+cuadruplos = [
+    ['START', '-', '-', '-']
+]
 pila_operadores = []
 pila_operandos = []
 pila_tipos = []
@@ -413,13 +415,21 @@ pila_saltos = []
 contador = 0
 
 def print_todo():
-    print('tabla de simbolo: ', symbol_table)
-    print('tabla de constantes: ', constant_table)
-    print('pila operadores: ', pila_operadores)
-    print('pila operandos: ', pila_operandos)
-    print('pila tipos: ', pila_tipos)
-    print('cuadruplos: ', cuadruplos)
-    print('pila de saltos: ', pila_saltos)
+    pp = pprint.PrettyPrinter(indent=4)
+    print('tabla de simbolo: ')
+    pp.pprint(symbol_table)
+    print('tabla de constantes: ')
+    pp.pprint(constant_table)
+    print('pila operadores: ')
+    pp.pprint(pila_operadores)
+    print('pila operandos: ')
+    pp.pprint(pila_operandos)
+    print('pila tipos: ')
+    pp.pprint(pila_tipos)
+    print('cuadruplos: ')
+    pp.pprint(cuadruplos)
+    print('pila de saltos: ')
+    pp.pprint(pila_saltos)
 
 ############### PARSER ###############
 
@@ -436,7 +446,7 @@ def p_programa(p):
 
 
 def p_main(p):
-    '''main : MAIN n_seen_func_name bloque_module'''
+    '''main : MAIN n_seen_func_name n_seen_main bloque_module'''
 
 
 def p_vars(p):
@@ -552,7 +562,7 @@ def p_for(p):
 
 
 def p_while(p):
-    '''while : WHILE  LPAREN expresion RPAREN  bloque '''
+    '''while : WHILE n_salto_while LPAREN expresion RPAREN n_cond_while bloque n_ret_while '''
 
 
 def p_condicion(p):
@@ -586,13 +596,13 @@ def error(message):
 
 ############### PUNTOS NEURALGICOS ###############
 
-
+# Punto neuralgico para reconocer el tipo
 def p_n_seen_type(p):
     'n_seen_type : '
     global current_type
     current_type = p[-1]
 
-
+# Punto neuralgico para agregar cada variable en su lugar debido en la tabla
 def p_n_seen_var_name(p):
     'n_seen_var_name : '
     global symbol_table,current_var, current_func
@@ -610,53 +620,54 @@ def p_n_seen_var_name(p):
         }
         current_var = p[-1]
     
-
+# Punto neuralgico para el manejo de las direcciones de las variables de cada funcion y el tipo de funcion
 def p_n_seen_func_name(p):
     'n_seen_func_name : '
-    global symbol_table, current_func, current_type, next_local_int, next_local_float, next_local_char
+    global symbol_table, current_func, current_type, next_local_int, next_local_float, next_local_char, cuadruplos
     next_local_int = 3000
     next_local_float = 4000
     next_local_char = 5000
     symbol_table[p[-1]] = {
         'vars': {},
         'type': current_type,
+        'start': len(cuadruplos)
     }
     current_func = p[-1]
 
-
+# Funcion que ayuda con el manejo de direcciones de las variables globales y locales
 def get_next_var_address():
     global current_func, current_type, next_global_int, next_global_float, next_global_char,next_local_int, next_local_float, next_local_char
     aux = 0
     if current_func == '#global':
         if current_type == 'int':
             if next_global_int > 6999: 
-                error('Exceso de variables')
+                error('Exceso de variables globales {}'.format(current_type))
             aux = next_global_int
             next_global_int += 1
         elif current_type == 'float':
             if next_global_float > 7999: 
-                error('Exceso de variables')
+                error('Exceso de variables globales {}'.format(current_type))
             aux = next_global_float
             next_global_float += 1
         elif current_type == 'char':
             if next_global_char > 8999: 
-                error('Exceso de variables')
+                error('Exceso de variables globales {}'.format(current_type))
             aux = next_global_char
             next_global_char += 1
     else:
         if current_type == 'int':
             if next_local_int > 3999: 
-                error('Exceso de variables')
+                error('Exceso de variables locales {}'.format(current_type))
             aux = next_local_int
             next_local_int += 1
         elif current_type == 'float':
             if next_local_float > 4999: 
-                error('Exceso de variables')
+                error('Exceso de variables locales {}'.format(current_type))
             aux = next_local_float
             next_local_float += 1
         elif current_type == 'char':
             if next_local_char > 5999: 
-                error('Exceso de variables')
+                error('Exceso de variables locales {}'.format(current_type))
             aux = next_local_char
             next_local_char += 1
     return aux
@@ -682,7 +693,7 @@ def get_next_const_address(constant_type):
         next_constant_char += 1
     return aux
 
-
+# Punto neuralgico para asignar el tipo de cada variable
 def p_n_set_var_type(p):
     'n_set_var_type : '
     global symbol_table, current_func, current_var, current_type
@@ -691,7 +702,7 @@ def p_n_set_var_type(p):
         'address': get_next_var_address()
     }
 
-
+# Funcion auxiliar para buscar el tipo de la variable 
 def search_type(id):
     global symbol_table, current_func
     if id in symbol_table[current_func]['vars']:
@@ -699,7 +710,7 @@ def search_type(id):
     elif id in symbol_table['#global']['vars']:
         return symbol_table['#global']['vars'][id]['type']
     else:
-        error('No se encontró la variable ' + id)
+        error('No se encontró la variable {}'.format(id))
 
 
 #Funcion para comprobar que no se repite un ID 
@@ -719,7 +730,7 @@ def p_n_seen_factor_id(p):
     pila_operandos.append(search_address(p[-1]))
     pila_tipos.append(search_type(p[-1]))
 
-
+# Punto neuralgico para poder revisar el tipo de la constante int y brindarle su direccion adecuada
 def p_n_seen_factor_int(p):
     'n_seen_factor_int : '
     global pila_operandos, pila_tipos, constant_table, next_constant_int
@@ -732,8 +743,7 @@ def p_n_seen_factor_int(p):
     pila_operandos.append(constant_table[p[-1]]['address'])
     pila_tipos.append('int')
 
-
-#Agregando punto neuralgico para los tipos float
+# Punto neuralgico para poder revisar el tipo de la constante float y brindarle su direccion adecuada
 def p_n_seen_factor_float(p):
     'n_seen_factor_float : '
     global pila_operandos, pila_tipos, constant_table, next_constant_float 
@@ -746,7 +756,7 @@ def p_n_seen_factor_float(p):
     pila_tipos.append('float')
 
 
-#Agregando punto neuralgico para los tipos char
+# Punto neuralgico para poder revisar el tipo de la constante char y brindarle su direccion adecuada
 def p_n_seen_factor_char(p):
     'n_seen_factor_char : '
     global pila_operandos, pila_tipos, constant_table, next_constant_char
@@ -789,23 +799,30 @@ def p_n_gen_factor(p):
     'n_gen_factor : '
     operator_ident(['*','/'])
 
+# Punto neuralgico para los operadores condicionales
 def p_n_gen_relational(p):
     'n_gen_relational : '
     operator_ident(['>', '<', '!=', '==','>=','<='])
 
+# Puntos neuralgicos para los operadores logicos
+# OR
 def p_n_gen_or(p):
     'n_gen_or : '
     operator_ident(['|'])
 
+# AND
 def p_n_gen_and(p):
     'n_gen_and : '
     operator_ident(['&&'])
 
+# Fondo falso para dar prioridad de operaciones
+# Se agrega parentesis a la pila de operadores
 def p_n_push_fake_bottom(p):
     'n_push_fake_bottom : '
     global pila_operadores
     pila_operadores.append('(')
 
+# Se saca de la pila al ya haber 
 def p_n_pop_fake_bottom(p):
     'n_pop_fake_bottom : '
     global pila_operadores
@@ -839,69 +856,70 @@ def operator_ident(ops):
 # 1 - Punto neuralgico para revisar que la expresion tenga un valor bool y genera el cuadruplo GotoF
 def p_n_check_exp(p):
     '''n_check_exp : '''
-    global pila_operadores, contador, pila_tipos, pila_saltos, cuadruplos, current_type
+    global pila_operadores, pila_tipos, pila_saltos, cuadruplos, current_type
     exp_type = pila_tipos.pop()
     if exp_type != 'bool':
-        error('Type Mismatch')
+        error('Type Mismatch el tipo de la evaluacion es {}'.format(exp_type))
     else:
         result = pila_operandos.pop()
         quad = ['GOTOF',result,'-',0]
-        cuadruplos.append(quad)
-        contador += 1 
+        cuadruplos.append(quad) 
         pila_saltos.append(len(cuadruplos)-1)
         
 # 2 - Punto neuralgico para completar el cuadruplo 
 def p_n_fill_end(p):
     '''n_fill_end : '''
-    global pila_saltos, contador 
+    global pila_saltos 
     end = pila_saltos.pop()
     cuadruplos[end][3] = len(cuadruplos)
 
 # 3 - Punto neuralgico para crear el GOTO al else 
 def p_n_else(p):
     '''n_else : '''
-    global pila_saltos, contador, cuadruplos
-    goto_aux = ['GOTO', '-', '-', 0]
-    contador += 1 
+    global pila_saltos, cuadruplos
+    goto_aux = ['GOTO', '-', '-', 0] 
     cuadruplos.append(goto_aux)
     false = pila_saltos.pop()
     pila_saltos.append(len(cuadruplos)-1)
-    cuadruplos[false][3] = len(cuadruplos)
+    cuadruplos[false][3] = len(cuadruplos) 
+
+
+def p_n_seen_main(p):
+    'n_seen_main : '
+    global cuadruplos
+    cuadruplos[0][3] = len(cuadruplos)
 
 
 ############### WHILE ###############
 
-# # 1 - Punto neuralgico para crer push en la pila de saltos while
-# def p_n_salto_while(p):
-#     '''n_salto_while :'''
-#     global pila_saltos, contador
-#     contador += 1
-#     pila_saltos.append(contador)
+# 1 - Punto neuralgico para crer push en la pila de saltos while
+def p_n_salto_while(p):
+    '''n_salto_while :'''
+    global pila_saltos,cuadruplos 
+    pila_saltos.append(len(cuadruplos))
 
-# # 2 - Punto neuralgico para comprobar la condicion del while
-# def p_n_cond_while(p):
-#     '''n_cond_while :'''
-#     global pila_tipos, pila_operandos, cuadruplos, pila_saltos, contador
-#     exp_type = pila_tipos.pop()
-#     if exp_type != 'bool':
-#         error('Type Mismatch')
-#     else:
-#         result = pila_operandos.pop()
-#         quad = ['GOTOF',result,'-',0]
-#         contador += 1
-#         cuadruplos.append(quad)
-#         pila_saltos.append(contador - 1)
+# 2 - Punto neuralgico para comprobar la condicion del while
+def p_n_cond_while(p):
+    '''n_cond_while :'''
+    global pila_tipos, pila_operandos, cuadruplos, pila_saltos
+    exp_type = pila_tipos.pop()
+    if exp_type != 'bool':
+        error('Type Mismatch el tipo resultante es: {}'.format(exp_type))
+    else:
+        result = pila_operandos.pop()
+        quad = ['GOTOF',result,'-',0]
+        cuadruplos.append(quad)
+        pila_saltos.append(len(cuadruplos)-1)
 
-# # 3 - Punto neuralgico para hacer return en el while
-# def p_n_ret_while(p):
-#     '''n_ret_while :'''
-#     global pila_saltos,contador
-#     end = pila_saltos.pop()
-#     ret = pila_saltos.pop()
-#     quad = ['GOTOF',ret,'-','-']
-#     contador += 1
-#     cuadruplos.append(quad)
-#     cuadruplos[end][3] = contador
+# 3 - Punto neuralgico para hacer return en el while
+def p_n_ret_while(p):
+    '''n_ret_while :'''
+    global pila_saltos,contador
+    end = pila_saltos.pop()
+    ret = pila_saltos.pop()
+    quad = ['GOTOF',ret,'-','-']
+    cuadruplos.append(quad)
+    cuadruplos[end][3] = len(cuadruplos)
 
 ############### EJECUCION ###############
 
@@ -923,3 +941,11 @@ if __name__ == '__main__':
         parser.parse(file.read())
         print('FINISHED')
         print_todo()
+        
+        with open(program_name + '.o', 'w') as file:
+            output = {
+                'symbol_table': symbol_table,
+                'constant_table': constant_table,
+                'cuadruplos': cuadruplos,
+            }
+            file.write(str(output))
