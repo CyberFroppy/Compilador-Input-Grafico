@@ -24,7 +24,7 @@ reserved = {
     'module': 'MODULE',
     'return': 'RETURN',
     'write': 'WRITE',
-    'read': 'READ'
+    'read': 'READ',
 }
 # Token List
 tokens = [
@@ -445,7 +445,7 @@ def p_programa(p):
 
 
 def p_main(p):
-    '''main : MAIN n_seen_func_name n_seen_main bloque_module'''
+    '''main : MAIN n_seen_func_name n_seen_main bloque_module n_end_program'''
 
 
 def p_vars(p):
@@ -559,7 +559,7 @@ def p_return(p):
 
 
 def p_for(p):
-    '''for : FOR asignacion TO CTEINT bloque'''
+    '''for : FOR n_salto_for asignacion TO CTEINT bloque'''
 
 
 def p_while(p):
@@ -950,6 +950,18 @@ def p_n_ret_while(p):
     cuadruplos.append(quad)
     cuadruplos[end][3] = len(cuadruplos)
 
+############### FOR ###############
+
+# 1 - Punto neuralgico para crer push en la pila de saltos for
+def p_n_salto_for(p):
+    '''n_salto_for :'''
+    global pila_saltos,cuadruplos 
+    pila_saltos.append(len(cuadruplos))
+
+# 2 - Punto neuralgico para poder tener el contador
+
+
+
 ############### READ y WRITE ###############
 
 # Punto neuralgico para la lectura de variables
@@ -966,10 +978,16 @@ def p_n_print(p):
     global cuadruplos, pila_operandos
     if len(pila_operandos) > 0:
         result = pila_operandos.pop()
-        quad = ['WRITE','-','-',result]
+        quad = ['PRINT','-','-',result]
         cuadruplos.append(quad)
         pila_tipos.pop()
 
+############### END ###############
+# Punto neuralgico para agregar el cuadruplo que finaliza el programa
+def p_n_end_program(p):
+    'n_end_program : '
+    global cuadruplos,pila_saltos
+    cuadruplos.append(['END','-','-',-1])
 
 ############### EJECUCION ###############
 
