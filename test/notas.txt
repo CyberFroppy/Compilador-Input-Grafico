@@ -22,7 +22,6 @@ Variables
             8000 - 8999
 
 Lunes ''''''
-Generar quad de lectura, escritura.
 Generar cuad for 0%
 
 Martes ''''' 

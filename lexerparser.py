@@ -82,11 +82,11 @@ t_PLUS = r'\+'
 t_MINUS = r'-'
 t_MULTIPLY = r'\*'
 t_DIVIDE = r'/'
-t_CTESTRING = r'".*"'
+t_CTESTRING = r'\'[\w\d\s\,. ]*\'|\"[\w\d\s\,. ]*\"'
 t_CTEINT = r'[0-9][0-9]*'
 t_CTEF = r'[0-9][0-9]*\.[0-9]'
 #Agregando constante
-t_CTEC = r'(\'[^\']*\')'
+t_CTEC = r'(\'[^\']\')'
 t_TRANSPUESTA = r'\¡'
 t_DETERMINANTE = r'\$'
 t_INVERSA = r'\?'
@@ -395,12 +395,13 @@ constant_table = {}
 next_constant_int = 0
 next_constant_float = 1000
 next_constant_char = 2000
-next_local_int = 3000
-next_local_float = 4000
-next_local_char = 5000
-next_global_int = 6000
-next_global_float = 7000
-next_global_char = 8000
+next_constant_string = 3000
+next_local_int = 4000
+next_local_float = 5000
+next_local_char = 6000
+next_global_int = 7000
+next_global_float = 8000
+next_global_char = 9000
 
 
 cuadruplos = [
@@ -582,10 +583,10 @@ def p_escritura(p):
 
 
 def p_escritura_aux(p):
-    '''escritura_aux : expresion COMA escritura_aux
-                     | CTESTRING COMA escritura_aux
-                     | expresion
-                     | CTESTRING'''
+    '''escritura_aux : expresion n_print COMA escritura_aux
+                     | CTESTRING n_seen_string n_print COMA escritura_aux
+                     | expresion n_print
+                     | CTESTRING n_seen_string n_print'''
 
 
 def p_error(p):
@@ -631,9 +632,9 @@ def p_n_seen_var_name(p):
 def p_n_seen_func_name(p):
     'n_seen_func_name : '
     global symbol_table, current_func, current_type, next_local_int, next_local_float, next_local_char, cuadruplos
-    next_local_int = 3000
-    next_local_float = 4000
-    next_local_char = 5000
+    next_local_int = 4000
+    next_local_float = 5000
+    next_local_char = 6000
     symbol_table[p[-1]] = {
         'vars': {},
         'type': current_type,
@@ -647,33 +648,33 @@ def get_next_var_address():
     aux = 0
     if current_func == '#global':
         if current_type == 'int':
-            if next_global_int > 6999: 
+            if next_global_int > 7999: 
                 error('Exceso de variables globales {}'.format(current_type))
             aux = next_global_int
             next_global_int += 1
         elif current_type == 'float':
-            if next_global_float > 7999: 
+            if next_global_float > 8999: 
                 error('Exceso de variables globales {}'.format(current_type))
             aux = next_global_float
             next_global_float += 1
         elif current_type == 'char':
-            if next_global_char > 8999: 
+            if next_global_char > 9999: 
                 error('Exceso de variables globales {}'.format(current_type))
             aux = next_global_char
             next_global_char += 1
     else:
         if current_type == 'int':
-            if next_local_int > 3999: 
+            if next_local_int > 4999: 
                 error('Exceso de variables locales {}'.format(current_type))
             aux = next_local_int
             next_local_int += 1
         elif current_type == 'float':
-            if next_local_float > 4999: 
+            if next_local_float > 5999: 
                 error('Exceso de variables locales {}'.format(current_type))
             aux = next_local_float
             next_local_float += 1
         elif current_type == 'char':
-            if next_local_char > 5999: 
+            if next_local_char > 6999: 
                 error('Exceso de variables locales {}'.format(current_type))
             aux = next_local_char
             next_local_char += 1
@@ -681,7 +682,7 @@ def get_next_var_address():
 
 #Funcion para agregar las direcciones a las constantes
 def get_next_const_address(constant_type):
-    global current_type,constant_table, next_constant_int, next_constant_float, next_constant_char
+    global current_type,constant_table, next_constant_int, next_constant_float, next_constant_char, next_constant_string
     aux = 0
     if constant_type == 'int':
         if next_constant_int > 999: 
@@ -698,6 +699,11 @@ def get_next_const_address(constant_type):
                 error('Exceso de constantes')
         aux = next_constant_char
         next_constant_char += 1
+    elif constant_type == 'string':
+        if next_constant_string > 3999: 
+                error('Exceso de constantes')
+        aux = next_constant_string
+        next_constant_string += 1
     return aux
 
 # Punto neuralgico para asignar el tipo de cada variable
@@ -767,13 +773,29 @@ def p_n_seen_factor_float(p):
 def p_n_seen_factor_char(p):
     'n_seen_factor_char : '
     global pila_operandos, pila_tipos, constant_table, next_constant_char
-    if (p[-1] not in constant_table):
-        constant_table[p[-1]] = { 
+    constant_char = p[-1]
+    constant_char = constant_char[1:-1]
+    if constant_char not in constant_table:
+        constant_table[constant_char] = { 
             'address': get_next_const_address('char'),
             'type' : 'char'
         }
-    pila_operandos.append(constant_table[p[-1]]['address'])
+    pila_operandos.append(constant_table[constant_char]['address'])
     pila_tipos.append('char')
+
+# Punto neuralgico para poder revisar el tipo de la constante string y brindarle su direccion adecuada
+def p_n_seen_string(p): 
+    'n_seen_string : '
+    global pila_operandos, pila_tipos, constant_table, next_constant_string
+    constant_string = p[-1]
+    constant_string = constant_string[1:-1]
+    if constant_string not in constant_table:
+        constant_table[constant_string] = { 
+            'address': get_next_const_address('string'),
+            'type' : 'string'
+        }
+    pila_operandos.append(constant_table[constant_string]['address'])
+    pila_tipos.append('string')
 
 # Generacion del cuadruplo de asignacion 
 def p_n_assign(p):
@@ -890,7 +912,7 @@ def p_n_else(p):
     pila_saltos.append(len(cuadruplos)-1)
     cuadruplos[false][3] = len(cuadruplos) 
 
-
+# Punto neuralgico para agregar el cuadruplo de inicio
 def p_n_seen_main(p):
     'n_seen_main : '
     global cuadruplos
@@ -930,16 +952,23 @@ def p_n_ret_while(p):
 
 ############### READ y WRITE ###############
 
-# Punto neuralgico para la lectura de varibles
-
+# Punto neuralgico para la lectura de variables
 def p_n_read(p):
-    '''n_read :'''
+    'n_read : '
     global cuadruplos, pila_operandos
-    print("hola")
-    dir = search_address(p[-1])
-    print("no")
-    quad = ['READ','-','-',dir]
+    operand_address = search_address(p[-1])
+    quad = ['READ','-','-',operand_address]
     cuadruplos.append(quad)
+
+# Punto neuralgico para poder hacer print
+def p_n_print(p):
+    'n_print : '
+    global cuadruplos, pila_operandos
+    if len(pila_operandos) > 0:
+        result = pila_operandos.pop()
+        quad = ['WRITE','-','-',result]
+        cuadruplos.append(quad)
+        pila_tipos.pop()
 
 
 ############### EJECUCION ###############

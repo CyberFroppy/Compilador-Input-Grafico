@@ -6,5 +6,6 @@ module int func (hola:int) {
 }
 
 main {
-  read(aux1,aux2);
+  print("hola");
+  print("mundo");
 }
