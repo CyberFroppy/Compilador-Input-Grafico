@@ -113,8 +113,6 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 # Manejo de errores lexicos
-
-
 def t_error(t):
     # print("Lexical error  {0}  found in line  {1}  ".format(
     #     t.value[0], t.lineno))
@@ -491,7 +489,8 @@ def p_estatuto(p):
                 | return SEMICOLON
                 | for SEMICOLON
                 | while SEMICOLON
-                | call_module SEMICOLON'''
+                | call_module SEMICOLON
+                | lectura SEMICOLON'''
 
 
 def p_asignacion(p):
@@ -569,9 +568,16 @@ def p_condicion(p):
     '''condicion : IF LPAREN expresion RPAREN n_check_exp bloque ELSE n_else bloque n_fill_end
                  | IF LPAREN expresion RPAREN n_check_exp bloque n_fill_end'''
 
+def p_lectura(p):
+    '''lectura : READ LPAREN lect_aux RPAREN'''
+
+
+def p_lectura_aux(p):
+    '''lect_aux : ID n_read
+                | ID n_read COMA lect_aux'''
 
 def p_escritura(p):
-    'escritura : PRINT LPAREN escritura_aux RPAREN'
+    'escritura : PRINT LPAREN escritura_aux RPAREN SEMICOLON'
 
 
 def p_escritura_aux(p):
@@ -920,6 +926,20 @@ def p_n_ret_while(p):
     quad = ['GOTO','-','-',ret]
     cuadruplos.append(quad)
     cuadruplos[end][3] = len(cuadruplos)
+
+############### READ y WRITE ###############
+
+# Punto neuralgico para la lectura de varibles
+
+def p_n_read(p):
+    '''n_read :'''
+    global cuadruplos, pila_operandos
+    print("hola")
+    dir = search_address(p[-1])
+    print("no")
+    quad = ['READ','-','-',dir]
+    cuadruplos.append(quad)
+
 
 ############### EJECUCION ###############
 
