@@ -1,0 +1,23 @@
+program Example;
+var aux1: int; aux2: int; aux3: int; aux4: int.
+
+main {
+  aux1 =5;
+  aux2 =3; 
+  aux3 =4;
+  aux4 =2;
+
+  while(aux1 > aux2){
+
+    while(aux3 > aux4){
+
+      aux4 = aux4 +1;
+    };
+    
+    aux2 = aux2 +1;
+};
+
+print(aux2);
+print(aux4);
+  
+}

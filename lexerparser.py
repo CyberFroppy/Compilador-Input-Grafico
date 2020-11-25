@@ -399,10 +399,11 @@ next_constant_string = 3000
 next_local_int = 4000
 next_local_float = 5000
 next_local_char = 6000
-next_global_int = 7000
-next_global_float = 8000
-next_global_char = 9000
-
+next_local_bool = 7000
+next_global_int = 8000
+next_global_float = 9000
+next_global_char = 10000
+next_global_bool = 11000
 
 cuadruplos = [
     ['START', '-', '-', '-']
@@ -631,10 +632,11 @@ def p_n_seen_var_name(p):
 # Punto neuralgico para el manejo de las direcciones de las variables de cada funcion y el tipo de funcion
 def p_n_seen_func_name(p):
     'n_seen_func_name : '
-    global symbol_table, current_func, current_type, next_local_int, next_local_float, next_local_char, cuadruplos
+    global symbol_table, current_func, current_type, next_local_int, next_local_float, next_local_char,next_local_bool, cuadruplos
     next_local_int = 4000
     next_local_float = 5000
     next_local_char = 6000
+    next_local_bool = 7000
     symbol_table[p[-1]] = {
         'vars': {},
         'type': current_type,
@@ -644,24 +646,29 @@ def p_n_seen_func_name(p):
 
 # Funcion que ayuda con el manejo de direcciones de las variables globales y locales
 def get_next_var_address():
-    global current_func, current_type, next_global_int, next_global_float, next_global_char,next_local_int, next_local_float, next_local_char
+    global current_func, current_type, next_global_int, next_global_float, next_global_char,next_global_bool, next_local_int, next_local_float, next_local_char, next_local_bool
     aux = 0
     if current_func == '#global':
         if current_type == 'int':
-            if next_global_int > 7999: 
+            if next_global_int > 8999: 
                 error('Exceso de variables globales {}'.format(current_type))
             aux = next_global_int
             next_global_int += 1
         elif current_type == 'float':
-            if next_global_float > 8999: 
+            if next_global_float > 9999: 
                 error('Exceso de variables globales {}'.format(current_type))
             aux = next_global_float
             next_global_float += 1
         elif current_type == 'char':
-            if next_global_char > 9999: 
+            if next_global_char > 10999: 
                 error('Exceso de variables globales {}'.format(current_type))
             aux = next_global_char
             next_global_char += 1
+        elif current_type == 'bool':
+            if next_global_bool > 11999: 
+                error('Exceso de variables globales {}'.format(current_type))
+            aux = next_global_bool
+            next_global_bool += 1
     else:
         if current_type == 'int':
             if next_local_int > 4999: 
@@ -678,6 +685,11 @@ def get_next_var_address():
                 error('Exceso de variables locales {}'.format(current_type))
             aux = next_local_char
             next_local_char += 1
+        elif current_type == 'bool':
+            if next_local_char > 7999: 
+                error('Exceso de variables locales {}'.format(current_type))
+            aux = next_local_bool
+            next_local_bool += 1
     return aux
 
 #Funcion para agregar las direcciones a las constantes
@@ -693,7 +705,7 @@ def get_next_const_address(constant_type):
         if next_constant_float > 1999: 
                 error('Exceso de constantes')
         aux = next_constant_float
-        next_constant_float += 2
+        next_constant_float += 1
     elif constant_type == 'char':
         if next_constant_char > 2999: 
                 error('Exceso de constantes')
@@ -943,7 +955,7 @@ def p_n_cond_while(p):
 # 3 - Punto neuralgico para hacer return en el while
 def p_n_ret_while(p):
     '''n_ret_while :'''
-    global pila_saltos
+    global pila_saltos,cuadruplos
     end = pila_saltos.pop()
     ret = pila_saltos.pop()
     quad = ['GOTO','-','-',ret]

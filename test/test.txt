@@ -6,6 +6,6 @@ module int func (hola:int) {
 }
 
 main {
-  print("hola");
-  print("mundo");
+  aux2 = 2*1+(5+4)
+  print(aux)
 }
