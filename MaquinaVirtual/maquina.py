@@ -83,6 +83,12 @@ while current[-1] != -1:
     if cuadruplos[current[-1]][0] == 'START':
         current[-1] = cuadruplos[current[-1]][3]
     elif cuadruplos[current[-1]][0] == 'END':
+        print("Memoria Global: ")
+        print(mem_global)
+        print("Memoria Local: ")
+        print(mem_local)
+        print("Tabla de Constantes: ")
+        print(constant_table)
         current[-1] = -1
     #Sumar    
     elif cuadruplos[current[-1]][0] == '+':
@@ -190,7 +196,7 @@ while current[-1] != -1:
     elif cuadruplos[current[-1]][0] == '&&':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
-        if valor1 and valor2:
+        if valor1 == 2 and valor2 == 2:
             res = 2
         else:
             res = 1
@@ -199,16 +205,14 @@ while current[-1] != -1:
     elif cuadruplos[current[-1]][0] == '|':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
-        if valor1 or valor2:
+        if valor1 == 2 or valor2 == 2:
             res = 2
         else:
             res = 1
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
     elif cuadruplos[current[-1]][0] == 'GOTOF':
-        #print(cuadruplos[current[-1]][1])
         valor1 = read(cuadruplos[current[-1]][1])
-        #print(valor1)
         if valor1 == 1:
             current[-1] = cuadruplos[current[-1]][3]
         else:
