@@ -8,10 +8,10 @@ def error(message):
 program_name = sys.argv[1]
 with open(program_name, 'r') as file:
     global symbol_table, cuadruplos, raw_constant_table
-    input = eval(file.read())
-    symbol_table = input['symbol_table']
-    cuadruplos = input['cuadruplos']
-    raw_constant_table = input['constant_table']
+    inp = eval(file.read())
+    symbol_table = inp['symbol_table']
+    cuadruplos = inp['cuadruplos']
+    raw_constant_table = inp['constant_table']
 
 
 #Estructuras de memoria local y constantes
@@ -62,7 +62,7 @@ def read(address, depth=-1):
         val = chr(constant_table.get(address, None))
     elif address_n >= 3000 and address_n < 4000:
         val = constant_table.get(address, None)
-    if not val:
+    if val is None:
         print(val)
         error('Acceso a variable no asignada')
         current = -1
@@ -134,11 +134,11 @@ while current[-1] != -1:
         print(valor1)
         current[-1] = current[-1]+1
     # #Leer
-    # elif cuadruplos[current[-1]][0] == 'READ':
-    #     rese = input()
-    #     res = 1
-    #     write(cuadruplos[current[-1]][3], res)
-    #     current[-1] = current[-1]+1
+    elif cuadruplos[current[-1]][0] == 'READ':
+        res = input()
+        #TODO: verificar que el input esta correcto!
+        write(cuadruplos[current[-1]][3], res)
+        current[-1] = current[-1]+1
     elif cuadruplos[current[-1]][0] == '>':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])

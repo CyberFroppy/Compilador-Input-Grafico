@@ -15,7 +15,6 @@ reserved = {
     'print': 'PRINT',
     'if': 'IF',
     'else': 'ELSE',
-    'then': 'THEN',
     'to': 'TO',
     'while': 'WHILE',
     'do': 'DO',
@@ -82,7 +81,7 @@ t_PLUS = r'\+'
 t_MINUS = r'-'
 t_MULTIPLY = r'\*'
 t_DIVIDE = r'/'
-t_CTESTRING = r'\'[\w\d\s\,. ]*\'|\"[\w\d\s\,. ]*\"'
+t_CTESTRING = r'\"[\w\d\s\,. ]*\"'
 t_CTEINT = r'[0-9][0-9]*'
 t_CTEF = r'[0-9][0-9]*\.[0-9]'
 #Agregando constante
@@ -405,6 +404,7 @@ next_global_float = 9000
 next_global_char = 10000
 next_global_bool = 11000
 
+
 cuadruplos = [
     ['START', '-', '-', '-']
 ]
@@ -560,7 +560,7 @@ def p_return(p):
 
 
 def p_for(p):
-    '''for : FOR n_salto_for asignacion TO CTEINT bloque'''
+    '''for : FOR ID EQUAL expresion TO expresion DO  bloque '''
 
 
 def p_while(p):
@@ -892,6 +892,12 @@ def operator_ident(ops):
                 error('Error en el cuadruplo')  
 
 
+# Punto neuralgico para agregar el cuadruplo de inicio
+def p_n_seen_main(p):
+    'n_seen_main : '
+    global cuadruplos
+    cuadruplos[0][3] = len(cuadruplos)
+
 ############### IF ###############
 
 # 1 - Punto neuralgico para revisar que la expresion tenga un valor bool y genera el cuadruplo GotoF
@@ -924,16 +930,9 @@ def p_n_else(p):
     pila_saltos.append(len(cuadruplos)-1)
     cuadruplos[false][3] = len(cuadruplos) 
 
-# Punto neuralgico para agregar el cuadruplo de inicio
-def p_n_seen_main(p):
-    'n_seen_main : '
-    global cuadruplos
-    cuadruplos[0][3] = len(cuadruplos)
-
-
 ############### WHILE ###############
 
-# 1 - Punto neuralgico para crer push en la pila de saltos while
+# 1 - Punto neuralgico para crear push en la pila de saltos while
 def p_n_salto_while(p):
     '''n_salto_while :'''
     global pila_saltos,cuadruplos 
@@ -955,24 +954,57 @@ def p_n_cond_while(p):
 # 3 - Punto neuralgico para hacer return en el while
 def p_n_ret_while(p):
     '''n_ret_while :'''
-    global pila_saltos,cuadruplos
+    global pila_saltos, cuadruplos
     end = pila_saltos.pop()
     ret = pila_saltos.pop()
     quad = ['GOTO','-','-',ret]
     cuadruplos.append(quad)
     cuadruplos[end][3] = len(cuadruplos)
 
+
 ############### FOR ###############
 
-# 1 - Punto neuralgico para crer push en la pila de saltos for
-def p_n_salto_for(p):
-    '''n_salto_for :'''
-    global pila_saltos,cuadruplos 
-    pila_saltos.append(len(cuadruplos))
+# 1 - Punto neuralgico para crear push en la pila de saltos for
+# def p_n_valid_id(p):
+#     'n_salto_for : '
+#     global pila_tipos, pila_operandos 
+#     if search_type(p[-1]) != 'int':
+#         error('Type mismatch de la variable {}'.format(p[-1]))
+#     else:
+#         pila_operandos.append(p[-1])
+#         pila_tipos.append(search_address(p[-1]))
 
-# 2 - Punto neuralgico para poder tener el contador
 
+# 2 - Punto neuralgico para iniciar la variable de control en el for
+# def p_n_for_contador(p):
+#     'n_for_contador : '
+#     global pila_saltos, cuadruplos, pila_tipos, pila_operandos
+#     exp_type = pila_tipos.pop()
+#     if exp_type != 'int':
+#         error('Type Mismatch el tipo resultante es: {}'.format(exp_type))
+#     else: 
+#         exp = pila_operandos.pop()
+#         v_control = pila_operandos.pop()
+#         control_type = pila_tipos.pop()
+#         tipo_res = return_type_cubo(control_type,exp_type,'=')
+#         if tipo_res == 'err':
+#             error('Type Mismatch el tipo resultante es: {}'.format(tipo_res))
+#         else:
+#             cuadruplos.append(['=',exp,'-',v_control])
 
+# 3 - Punto neuralgico para terminar el for en caso de llegar al limite 
+# def p_n_end_for(p):
+#     'n_ret_for : '
+#     global pila_saltos,cuadruplos, pila_tipos,pila_operandos
+#     exp_type = pila_tipos.pop()
+#     if exp_type != 'int':
+#         error('Type Mismatch el tipo resultante es: {}'.format(exp_type))
+#     else:
+#         exp = pila_operandos.pop()
+#         cuadruplos.append('=',exp,'-',exp)
+#     quad = ['GOTO','-','-',ret]
+#     cuadruplos.append(quad)
+#     cuadruplos[end][3] = len(cuadruplos)
 
 ############### READ y WRITE ###############
 
@@ -993,6 +1025,9 @@ def p_n_print(p):
         quad = ['PRINT','-','-',result]
         cuadruplos.append(quad)
         pila_tipos.pop()
+
+################################# FUNCIONES  #################################
+
 
 ############### END ###############
 # Punto neuralgico para agregar el cuadruplo que finaliza el programa
