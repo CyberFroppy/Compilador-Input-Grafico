@@ -1,3 +1,4 @@
+from typing import Counter
 import ply.lex
 import ply.yacc
 import sys
@@ -391,6 +392,8 @@ symbol_table = {
 }
 param_table = []
 param_count = 0
+called_func = ''
+flag_return = 0
 
 constant_table = {}
 next_constant_int = 0
@@ -556,11 +559,15 @@ def p_params(p):
               | LPAREN RPAREN'''
 
 def p_call_module(p):
-    '''call_module : ID LPAREN expresion RPAREN 
-                   | ID LPAREN RPAREN'''
+    '''call_module : ID n_func_exist LPAREN aux_call_module n_verify_num_params RPAREN n_gen_gosub
+                   | ID n_func_exist LPAREN RPAREN n_gen_gosub'''
+
+def p_aux_call_module(p):
+    '''aux_call_module : expresion n_check_param
+                       | expresion n_check_param n_param_counter COMA aux_call_module'''
 
 def p_return(p):
-    '''return : RETURN expresion'''
+    '''return : RETURN n_search_return_func LPAREN expresion RPAREN n_return_quad'''
 
 
 def p_for(p):
@@ -1029,7 +1036,7 @@ def p_n_save_param_type(p):
 def p_n_gen_funcquad(p):
     'n_gen_func_quad : '
     global cuadruplos, pila_saltos
-    pila_saltos.append(len(cuadruplos))
+    # pila_saltos.append(len(cuadruplos)) revisar
 
 # Punto neuralgico para el manejo de las direcciones de las variables de cada funcion y el tipo de funcion
 def p_n_seen_func_name(p):
@@ -1065,8 +1072,109 @@ def p_n_seen_func_name(p):
 # Se genera el cuadruplo para terminar la funcion 
 def p_n_endfunc(p):
     'n_endfunc : '
-    global symbol_table, cuadruplos
-    cuadruplos.append(['ENDFUNC', '-', '-', '-'])
+    global symbol_table, cuadruplos, flag_return
+    func_type = symbol_table['#global']['vars'][current_func]['type']
+    if func_type != 'void' and flag_return == 1:
+        cuadruplos.append(['ENDFUNC', '-', '-', '-'])
+        flag_return = 0
+    elif func_type == 'void':
+        pass
+    else:
+        error('Funcion {} sin retorno'.format(func_type))
+    
+
+# Punto neuralgico para saber si la funcion existe
+def p_n_func_exist(p):
+    'n_func_exist : '
+    global symbol_table, called_func
+    called_func = p[-1]
+    if called_func not in symbol_table:
+        error('La funcion {} no existe'.format(called_func))
+
+# Punto neuralgico para generar el cuadruplo ERA insertando el fondo falso
+def p_n_gen_era(p):
+    'n_gen_era : '
+    global pila_operadores, cuadruplos, called_func
+    quad = ['ERA','-','-',called_func]
+    cuadruplos.append(quad)
+    # Inserta fondo falso para no confundir los parametros
+    pila_operadores.append('[')
+
+# Punto neuralgico para validar el numero de parametros con el que se llamo la funcion 
+def p_n_verify_num_params(p):
+    'n_verify_num_params : '
+    global param_count, param_table, called_func, param_count
+    
+    for i in range(len(param_table)):
+            if param_table[i][0] == called_func:
+                param_count += 1
+
+# Punto neuralgico que sirve de contador de parametros al llamar la funcion
+def p_n_param_counter(p):
+    'n_param_counter : '
+    global param_count
+    param_count += 1
+
+# Punto neuralgico para revisar que la funcion sea del tipo correcto y generar quad PARAMETRO
+def p_n_check_param(p):
+    'n_check_param : '
+    global pila_operandos, pila_tipos, cuadruplos,param_count
+    params_func = 0
+    param_type = ''
+    argument = pila_operandos.pop()
+    argument_type = pila_tipos.pop()
+    # Recorre la tabla de parametros para contar las veces que aparece la funcion y contar sus parametros
+    for i in range(len(param_table)):
+        if param_table[i][0] == called_func:
+             params_func += 1
+    if param_count < params_func:
+        param_type = param_table[param_count][1]
+        if argument_type == param_type:
+            quad = ['PARAMETER', '-', argument, param_count + 1]
+            cuadruplos.append(quad)
+        else:
+            error('Tipo de parametro no concide con: {}'.format(param_type))
+    else:
+        error('El numero de parametros no coincide con {}'.format(params_func))
+
+# Punto neuralgico para generar el cuadruplo de GOSUB       
+def p_n_gen_gosub(p):
+    '''n_gen_gosub : '''
+    global cuadruplos, called_func
+    quad = ['GOTOSUB', '-', '-', called_func]
+    cuadruplos.append(quad)
+
+
+############### RETURN ###############
+# Punto neuralgico para buscar a la variable de la funcion
+def p_n_search_return_func(p):
+    'n_search_return_func :'
+    global current_func, symbol_table, flag_return
+    func_type = symbol_table['#global']['vars'][current_func]['type']
+    if func_type == 'void':
+        error('Funcion void no tiene retorno')
+    else: 
+        flag_return = 1
+# Punto neuralgico para generar el cuadruplo RETURN y asignar valor a su variable
+# global correspondiente.
+def p_n_return_quad(p):
+    'n_return_quad : '
+    global pila_operandos, pila_tipos, cuadruplos, symbol_table, current_func
+    result = pila_operandos.pop()
+    result_tipo = pila_tipos.pop()
+    # pila_operandos.append(result)
+    # pila_tipos.append(result_tipo)
+    func_type = symbol_table[current_func]['type']
+    if result_tipo == func_type: 
+        quad = ['RETURN', '-', '-', result]
+        cuadruplos.append(quad)
+        #Asignar el valor a la variable global de la funcion 
+        func_global_var = symbol_table['#global']['vars'][current_func]['address']
+        quad_result = ['=', result, '-', func_global_var]
+        cuadruplos.append(quad_result)
+    else:
+        error('El tipo de retorno no es: {}'.format(func_type))
+
 
 
 ############### END ###############
