@@ -19,8 +19,8 @@ Rule 5     main -> MAIN n_seen_func_name n_seen_main bloque_module n_end_program
 Rule 6     vars -> VAR vars_aux
 Rule 7     vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type SEMICOLON vars_aux
 Rule 8     vars_aux -> ID n_seen_var_name COLON tipo n_set_var_type DOT
-Rule 9     vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
-Rule 10    vars_func -> ID n_seen_var_name COLON tipo n_set_var_type
+Rule 9     vars_func -> ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type COMA vars_func
+Rule 10    vars_func -> ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type
 Rule 11    tipo -> INT n_seen_type
 Rule 12    tipo -> FLOAT n_seen_type
 Rule 13    tipo -> CHAR n_seen_type
@@ -63,10 +63,10 @@ Rule 49    factor -> CTEINT n_seen_factor_int
 Rule 50    factor -> CTEF n_seen_factor_float
 Rule 51    factor -> CTEC n_seen_factor_char
 Rule 52    factor -> ID n_seen_factor_id
-Rule 53    module -> MODULE VOID n_seen_type ID n_seen_func_name params bloque_module module
-Rule 54    module -> MODULE tipo ID n_seen_func_name params bloque_module module
-Rule 55    module -> MODULE VOID n_seen_type ID n_seen_func_name params bloque_module
-Rule 56    module -> MODULE tipo ID n_seen_func_name params bloque_module
+Rule 53    module -> MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module
+Rule 54    module -> MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module module
+Rule 55    module -> MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module
+Rule 56    module -> MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module
 Rule 57    params -> LPAREN vars_func RPAREN
 Rule 58    params -> LPAREN RPAREN
 Rule 59    call_module -> ID LPAREN expresion RPAREN
@@ -111,7 +111,9 @@ Rule 97    n_cond_while -> <empty>
 Rule 98    n_ret_while -> <empty>
 Rule 99    n_read -> <empty>
 Rule 100   n_print -> <empty>
-Rule 101   n_end_program -> <empty>
+Rule 101   n_save_param_type -> <empty>
+Rule 102   n_gen_func_quad -> <empty>
+Rule 103   n_end_program -> <empty>
 
 Terminals, with rules where they appear
 
@@ -195,6 +197,7 @@ n_end_program        : 5
 n_fill_end           : 64 65
 n_gen_and            : 31 32
 n_gen_factor         : 45 46 47
+n_gen_func_quad      : 53 54 55 56
 n_gen_or             : 33 34
 n_gen_relational     : 35 36 37 38 39 40 41
 n_gen_term           : 42 43 44
@@ -204,6 +207,7 @@ n_push_fake_bottom   : 48
 n_read               : 67 68
 n_ret_while          : 63
 n_salto_while        : 63
+n_save_param_type    : 9 10
 n_seen_factor_char   : 51
 n_seen_factor_float  : 50
 n_seen_factor_id     : 30 52
@@ -271,10 +275,10 @@ state 4
     (3) programa -> PROGRAM ID SEMICOLON . vars main
     (4) programa -> PROGRAM ID SEMICOLON . main
     (6) vars -> . VAR vars_aux
-    (53) module -> . MODULE VOID n_seen_type ID n_seen_func_name params bloque_module module
-    (54) module -> . MODULE tipo ID n_seen_func_name params bloque_module module
-    (55) module -> . MODULE VOID n_seen_type ID n_seen_func_name params bloque_module
-    (56) module -> . MODULE tipo ID n_seen_func_name params bloque_module
+    (53) module -> . MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (54) module -> . MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (55) module -> . MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module
+    (56) module -> . MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module
     (5) main -> . MAIN n_seen_func_name n_seen_main bloque_module n_end_program
 
     VAR             shift and go to state 8
@@ -289,10 +293,10 @@ state 5
 
     (1) programa -> PROGRAM ID SEMICOLON vars . module main
     (3) programa -> PROGRAM ID SEMICOLON vars . main
-    (53) module -> . MODULE VOID n_seen_type ID n_seen_func_name params bloque_module module
-    (54) module -> . MODULE tipo ID n_seen_func_name params bloque_module module
-    (55) module -> . MODULE VOID n_seen_type ID n_seen_func_name params bloque_module
-    (56) module -> . MODULE tipo ID n_seen_func_name params bloque_module
+    (53) module -> . MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (54) module -> . MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (55) module -> . MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module
+    (56) module -> . MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module
     (5) main -> . MAIN n_seen_func_name n_seen_main bloque_module n_end_program
 
     MODULE          shift and go to state 9
@@ -329,10 +333,10 @@ state 8
 
 state 9
 
-    (53) module -> MODULE . VOID n_seen_type ID n_seen_func_name params bloque_module module
-    (54) module -> MODULE . tipo ID n_seen_func_name params bloque_module module
-    (55) module -> MODULE . VOID n_seen_type ID n_seen_func_name params bloque_module
-    (56) module -> MODULE . tipo ID n_seen_func_name params bloque_module
+    (53) module -> MODULE . VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (54) module -> MODULE . tipo ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (55) module -> MODULE . VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module
+    (56) module -> MODULE . tipo ID n_seen_func_name params n_gen_func_quad bloque_module
     (11) tipo -> . INT n_seen_type
     (12) tipo -> . FLOAT n_seen_type
     (13) tipo -> . CHAR n_seen_type
@@ -404,8 +408,8 @@ state 15
 
 state 16
 
-    (53) module -> MODULE VOID . n_seen_type ID n_seen_func_name params bloque_module module
-    (55) module -> MODULE VOID . n_seen_type ID n_seen_func_name params bloque_module
+    (53) module -> MODULE VOID . n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (55) module -> MODULE VOID . n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module
     (74) n_seen_type -> .
 
     ID              reduce using rule 74 (n_seen_type -> .)
@@ -414,8 +418,8 @@ state 16
 
 state 17
 
-    (54) module -> MODULE tipo . ID n_seen_func_name params bloque_module module
-    (56) module -> MODULE tipo . ID n_seen_func_name params bloque_module
+    (54) module -> MODULE tipo . ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (56) module -> MODULE tipo . ID n_seen_func_name params n_gen_func_quad bloque_module
 
     ID              shift and go to state 25
 
@@ -485,16 +489,16 @@ state 23
 
 state 24
 
-    (53) module -> MODULE VOID n_seen_type . ID n_seen_func_name params bloque_module module
-    (55) module -> MODULE VOID n_seen_type . ID n_seen_func_name params bloque_module
+    (53) module -> MODULE VOID n_seen_type . ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (55) module -> MODULE VOID n_seen_type . ID n_seen_func_name params n_gen_func_quad bloque_module
 
     ID              shift and go to state 31
 
 
 state 25
 
-    (54) module -> MODULE tipo ID . n_seen_func_name params bloque_module module
-    (56) module -> MODULE tipo ID . n_seen_func_name params bloque_module
+    (54) module -> MODULE tipo ID . n_seen_func_name params n_gen_func_quad bloque_module module
+    (56) module -> MODULE tipo ID . n_seen_func_name params n_gen_func_quad bloque_module
     (76) n_seen_func_name -> .
 
     LPAREN          reduce using rule 76 (n_seen_func_name -> .)
@@ -562,8 +566,8 @@ state 30
 
 state 31
 
-    (53) module -> MODULE VOID n_seen_type ID . n_seen_func_name params bloque_module module
-    (55) module -> MODULE VOID n_seen_type ID . n_seen_func_name params bloque_module
+    (53) module -> MODULE VOID n_seen_type ID . n_seen_func_name params n_gen_func_quad bloque_module module
+    (55) module -> MODULE VOID n_seen_type ID . n_seen_func_name params n_gen_func_quad bloque_module
     (76) n_seen_func_name -> .
 
     LPAREN          reduce using rule 76 (n_seen_func_name -> .)
@@ -572,8 +576,8 @@ state 31
 
 state 32
 
-    (54) module -> MODULE tipo ID n_seen_func_name . params bloque_module module
-    (56) module -> MODULE tipo ID n_seen_func_name . params bloque_module
+    (54) module -> MODULE tipo ID n_seen_func_name . params n_gen_func_quad bloque_module module
+    (56) module -> MODULE tipo ID n_seen_func_name . params n_gen_func_quad bloque_module
     (57) params -> . LPAREN vars_func RPAREN
     (58) params -> . LPAREN RPAREN
 
@@ -584,9 +588,9 @@ state 32
 state 33
 
     (5) main -> MAIN n_seen_func_name n_seen_main bloque_module . n_end_program
-    (101) n_end_program -> .
+    (103) n_end_program -> .
 
-    $end            reduce using rule 101 (n_end_program -> .)
+    $end            reduce using rule 103 (n_end_program -> .)
 
     n_end_program                  shift and go to state 39
 
@@ -653,8 +657,8 @@ state 35
 
 state 36
 
-    (53) module -> MODULE VOID n_seen_type ID n_seen_func_name . params bloque_module module
-    (55) module -> MODULE VOID n_seen_type ID n_seen_func_name . params bloque_module
+    (53) module -> MODULE VOID n_seen_type ID n_seen_func_name . params n_gen_func_quad bloque_module module
+    (55) module -> MODULE VOID n_seen_type ID n_seen_func_name . params n_gen_func_quad bloque_module
     (57) params -> . LPAREN vars_func RPAREN
     (58) params -> . LPAREN RPAREN
 
@@ -664,23 +668,20 @@ state 36
 
 state 37
 
-    (54) module -> MODULE tipo ID n_seen_func_name params . bloque_module module
-    (56) module -> MODULE tipo ID n_seen_func_name params . bloque_module
-    (14) bloque_module -> . LBRACKET vars estatuto_aux RBRACKET
-    (15) bloque_module -> . LBRACKET vars RBRACKET
-    (16) bloque_module -> . LBRACKET estatuto_aux RBRACKET
-    (17) bloque_module -> . LBRACKET RBRACKET
+    (54) module -> MODULE tipo ID n_seen_func_name params . n_gen_func_quad bloque_module module
+    (56) module -> MODULE tipo ID n_seen_func_name params . n_gen_func_quad bloque_module
+    (102) n_gen_func_quad -> .
 
-    LBRACKET        shift and go to state 34
+    LBRACKET        reduce using rule 102 (n_gen_func_quad -> .)
 
-    bloque_module                  shift and go to state 61
+    n_gen_func_quad                shift and go to state 61
 
 state 38
 
     (57) params -> LPAREN . vars_func RPAREN
     (58) params -> LPAREN . RPAREN
-    (9) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
-    (10) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type
+    (9) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type COMA vars_func
+    (10) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type
 
     RPAREN          shift and go to state 63
     ID              shift and go to state 64
@@ -956,8 +957,18 @@ state 59
 
 state 60
 
-    (53) module -> MODULE VOID n_seen_type ID n_seen_func_name params . bloque_module module
-    (55) module -> MODULE VOID n_seen_type ID n_seen_func_name params . bloque_module
+    (53) module -> MODULE VOID n_seen_type ID n_seen_func_name params . n_gen_func_quad bloque_module module
+    (55) module -> MODULE VOID n_seen_type ID n_seen_func_name params . n_gen_func_quad bloque_module
+    (102) n_gen_func_quad -> .
+
+    LBRACKET        reduce using rule 102 (n_gen_func_quad -> .)
+
+    n_gen_func_quad                shift and go to state 97
+
+state 61
+
+    (54) module -> MODULE tipo ID n_seen_func_name params n_gen_func_quad . bloque_module module
+    (56) module -> MODULE tipo ID n_seen_func_name params n_gen_func_quad . bloque_module
     (14) bloque_module -> . LBRACKET vars estatuto_aux RBRACKET
     (15) bloque_module -> . LBRACKET vars RBRACKET
     (16) bloque_module -> . LBRACKET estatuto_aux RBRACKET
@@ -965,21 +976,7 @@ state 60
 
     LBRACKET        shift and go to state 34
 
-    bloque_module                  shift and go to state 97
-
-state 61
-
-    (54) module -> MODULE tipo ID n_seen_func_name params bloque_module . module
-    (56) module -> MODULE tipo ID n_seen_func_name params bloque_module .
-    (53) module -> . MODULE VOID n_seen_type ID n_seen_func_name params bloque_module module
-    (54) module -> . MODULE tipo ID n_seen_func_name params bloque_module module
-    (55) module -> . MODULE VOID n_seen_type ID n_seen_func_name params bloque_module
-    (56) module -> . MODULE tipo ID n_seen_func_name params bloque_module
-
-    MAIN            reduce using rule 56 (module -> MODULE tipo ID n_seen_func_name params bloque_module .)
-    MODULE          shift and go to state 9
-
-    module                         shift and go to state 98
+    bloque_module                  shift and go to state 98
 
 state 62
 
@@ -997,8 +994,8 @@ state 63
 
 state 64
 
-    (9) vars_func -> ID . n_seen_var_name COLON tipo n_set_var_type COMA vars_func
-    (10) vars_func -> ID . n_seen_var_name COLON tipo n_set_var_type
+    (9) vars_func -> ID . n_seen_var_name COLON tipo n_set_var_type n_save_param_type COMA vars_func
+    (10) vars_func -> ID . n_seen_var_name COLON tipo n_set_var_type n_save_param_type
     (75) n_seen_var_name -> .
 
     COLON           reduce using rule 75 (n_seen_var_name -> .)
@@ -1564,24 +1561,30 @@ state 96
 
 state 97
 
-    (53) module -> MODULE VOID n_seen_type ID n_seen_func_name params bloque_module . module
-    (55) module -> MODULE VOID n_seen_type ID n_seen_func_name params bloque_module .
-    (53) module -> . MODULE VOID n_seen_type ID n_seen_func_name params bloque_module module
-    (54) module -> . MODULE tipo ID n_seen_func_name params bloque_module module
-    (55) module -> . MODULE VOID n_seen_type ID n_seen_func_name params bloque_module
-    (56) module -> . MODULE tipo ID n_seen_func_name params bloque_module
+    (53) module -> MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad . bloque_module module
+    (55) module -> MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad . bloque_module
+    (14) bloque_module -> . LBRACKET vars estatuto_aux RBRACKET
+    (15) bloque_module -> . LBRACKET vars RBRACKET
+    (16) bloque_module -> . LBRACKET estatuto_aux RBRACKET
+    (17) bloque_module -> . LBRACKET RBRACKET
 
-    MAIN            reduce using rule 55 (module -> MODULE VOID n_seen_type ID n_seen_func_name params bloque_module .)
-    MODULE          shift and go to state 9
+    LBRACKET        shift and go to state 34
 
-    module                         shift and go to state 124
+    bloque_module                  shift and go to state 124
 
 state 98
 
-    (54) module -> MODULE tipo ID n_seen_func_name params bloque_module module .
+    (54) module -> MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module . module
+    (56) module -> MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module .
+    (53) module -> . MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (54) module -> . MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (55) module -> . MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module
+    (56) module -> . MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module
 
-    MAIN            reduce using rule 54 (module -> MODULE tipo ID n_seen_func_name params bloque_module module .)
+    MAIN            reduce using rule 56 (module -> MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module .)
+    MODULE          shift and go to state 9
 
+    module                         shift and go to state 125
 
 state 99
 
@@ -1592,10 +1595,10 @@ state 99
 
 state 100
 
-    (9) vars_func -> ID n_seen_var_name . COLON tipo n_set_var_type COMA vars_func
-    (10) vars_func -> ID n_seen_var_name . COLON tipo n_set_var_type
+    (9) vars_func -> ID n_seen_var_name . COLON tipo n_set_var_type n_save_param_type COMA vars_func
+    (10) vars_func -> ID n_seen_var_name . COLON tipo n_set_var_type n_save_param_type
 
-    COLON           shift and go to state 125
+    COLON           shift and go to state 126
 
 
 state 101
@@ -1618,13 +1621,13 @@ state 102
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 126
+    n_add_operator                 shift and go to state 127
 
 state 103
 
     (59) call_module -> ID LPAREN expresion . RPAREN
 
-    RPAREN          shift and go to state 127
+    RPAREN          shift and go to state 128
 
 
 state 104
@@ -1639,14 +1642,14 @@ state 105
     (64) condicion -> IF LPAREN expresion . RPAREN n_check_exp bloque ELSE n_else bloque n_fill_end
     (65) condicion -> IF LPAREN expresion . RPAREN n_check_exp bloque n_fill_end
 
-    RPAREN          shift and go to state 128
+    RPAREN          shift and go to state 129
 
 
 state 106
 
     (69) escritura -> PRINT LPAREN escritura_aux . RPAREN
 
-    RPAREN          shift and go to state 129
+    RPAREN          shift and go to state 130
 
 
 state 107
@@ -1658,7 +1661,7 @@ state 107
     COMA            reduce using rule 100 (n_print -> .)
     RPAREN          reduce using rule 100 (n_print -> .)
 
-    n_print                        shift and go to state 130
+    n_print                        shift and go to state 131
 
 state 108
 
@@ -1669,13 +1672,13 @@ state 108
     COMA            reduce using rule 82 (n_seen_string -> .)
     RPAREN          reduce using rule 82 (n_seen_string -> .)
 
-    n_seen_string                  shift and go to state 131
+    n_seen_string                  shift and go to state 132
 
 state 109
 
     (66) lectura -> READ LPAREN lect_aux . RPAREN
 
-    RPAREN          shift and go to state 132
+    RPAREN          shift and go to state 133
 
 
 state 110
@@ -1687,14 +1690,14 @@ state 110
     COMA            reduce using rule 99 (n_read -> .)
     RPAREN          reduce using rule 99 (n_read -> .)
 
-    n_read                         shift and go to state 133
+    n_read                         shift and go to state 134
 
 state 111
 
     (31) expresion -> exp n_gen_and . AND n_add_operator expresion
     (32) expresion -> exp n_gen_and .
 
-    AND             shift and go to state 134
+    AND             shift and go to state 135
     SEMICOLON       reduce using rule 32 (expresion -> exp n_gen_and .)
     RPAREN          reduce using rule 32 (expresion -> exp n_gen_and .)
     COMA            reduce using rule 32 (expresion -> exp n_gen_and .)
@@ -1707,7 +1710,7 @@ state 112
     (33) exp -> exp_aux n_gen_or . OR n_add_operator exp
     (34) exp -> exp_aux n_gen_or .
 
-    OR              shift and go to state 135
+    OR              shift and go to state 136
     AND             reduce using rule 34 (exp -> exp_aux n_gen_or .)
     SEMICOLON       reduce using rule 34 (exp -> exp_aux n_gen_or .)
     RPAREN          reduce using rule 34 (exp -> exp_aux n_gen_or .)
@@ -1726,12 +1729,12 @@ state 113
     (40) exp_aux -> exp_aux2 n_gen_relational . LESSEQUAL n_add_operator exp_aux
     (41) exp_aux -> exp_aux2 n_gen_relational .
 
-    GREATERT        shift and go to state 136
-    LESST           shift and go to state 137
-    NOTEQUAL        shift and go to state 138
-    DBEQUALS        shift and go to state 139
-    GREATEREQUAL    shift and go to state 140
-    LESSEQUAL       shift and go to state 141
+    GREATERT        shift and go to state 137
+    LESST           shift and go to state 138
+    NOTEQUAL        shift and go to state 139
+    DBEQUALS        shift and go to state 140
+    GREATEREQUAL    shift and go to state 141
+    LESSEQUAL       shift and go to state 142
     OR              reduce using rule 41 (exp_aux -> exp_aux2 n_gen_relational .)
     AND             reduce using rule 41 (exp_aux -> exp_aux2 n_gen_relational .)
     SEMICOLON       reduce using rule 41 (exp_aux -> exp_aux2 n_gen_relational .)
@@ -1747,8 +1750,8 @@ state 114
     (43) exp_aux2 -> term n_gen_term . MINUS n_add_operator exp_aux2
     (44) exp_aux2 -> term n_gen_term .
 
-    PLUS            shift and go to state 142
-    MINUS           shift and go to state 143
+    PLUS            shift and go to state 143
+    MINUS           shift and go to state 144
     GREATERT        reduce using rule 44 (exp_aux2 -> term n_gen_term .)
     LESST           reduce using rule 44 (exp_aux2 -> term n_gen_term .)
     NOTEQUAL        reduce using rule 44 (exp_aux2 -> term n_gen_term .)
@@ -1770,8 +1773,8 @@ state 115
     (46) term -> factor n_gen_factor . DIVIDE n_add_operator term
     (47) term -> factor n_gen_factor .
 
-    MULTIPLY        shift and go to state 144
-    DIVIDE          shift and go to state 145
+    MULTIPLY        shift and go to state 145
+    DIVIDE          shift and go to state 146
     PLUS            reduce using rule 47 (term -> factor n_gen_factor .)
     MINUS           reduce using rule 47 (term -> factor n_gen_factor .)
     GREATERT        reduce using rule 47 (term -> factor n_gen_factor .)
@@ -1821,7 +1824,7 @@ state 116
     CTEC            shift and go to state 91
     ID              shift and go to state 92
 
-    expresion                      shift and go to state 146
+    expresion                      shift and go to state 147
     exp                            shift and go to state 83
     exp_aux                        shift and go to state 84
     exp_aux2                       shift and go to state 85
@@ -1952,7 +1955,7 @@ state 121
     CTEC            shift and go to state 91
     ID              shift and go to state 92
 
-    expresion                      shift and go to state 147
+    expresion                      shift and go to state 148
     exp                            shift and go to state 83
     exp_aux                        shift and go to state 84
     exp_aux2                       shift and go to state 85
@@ -1991,7 +1994,7 @@ state 122
     CTEC            shift and go to state 91
     ID              shift and go to state 92
 
-    expresion                      shift and go to state 148
+    expresion                      shift and go to state 149
     exp                            shift and go to state 83
     exp_aux                        shift and go to state 84
     exp_aux2                       shift and go to state 85
@@ -2016,15 +2019,29 @@ state 123
 
 state 124
 
-    (53) module -> MODULE VOID n_seen_type ID n_seen_func_name params bloque_module module .
+    (53) module -> MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module . module
+    (55) module -> MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module .
+    (53) module -> . MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (54) module -> . MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module module
+    (55) module -> . MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module
+    (56) module -> . MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module
 
-    MAIN            reduce using rule 53 (module -> MODULE VOID n_seen_type ID n_seen_func_name params bloque_module module .)
+    MAIN            reduce using rule 55 (module -> MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module .)
+    MODULE          shift and go to state 9
 
+    module                         shift and go to state 150
 
 state 125
 
-    (9) vars_func -> ID n_seen_var_name COLON . tipo n_set_var_type COMA vars_func
-    (10) vars_func -> ID n_seen_var_name COLON . tipo n_set_var_type
+    (54) module -> MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module module .
+
+    MAIN            reduce using rule 54 (module -> MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module module .)
+
+
+state 126
+
+    (9) vars_func -> ID n_seen_var_name COLON . tipo n_set_var_type n_save_param_type COMA vars_func
+    (10) vars_func -> ID n_seen_var_name COLON . tipo n_set_var_type n_save_param_type
     (11) tipo -> . INT n_seen_type
     (12) tipo -> . FLOAT n_seen_type
     (13) tipo -> . CHAR n_seen_type
@@ -2033,9 +2050,9 @@ state 125
     FLOAT           shift and go to state 19
     CHAR            shift and go to state 20
 
-    tipo                           shift and go to state 149
+    tipo                           shift and go to state 151
 
-state 126
+state 127
 
     (30) asignacion -> ID n_seen_factor_id EQUAL n_add_operator . expresion n_assign
     (31) expresion -> . exp n_gen_and AND n_add_operator expresion
@@ -2067,21 +2084,21 @@ state 126
     CTEC            shift and go to state 91
     ID              shift and go to state 92
 
-    expresion                      shift and go to state 150
+    expresion                      shift and go to state 152
     exp                            shift and go to state 83
     exp_aux                        shift and go to state 84
     exp_aux2                       shift and go to state 85
     term                           shift and go to state 86
     factor                         shift and go to state 87
 
-state 127
+state 128
 
     (59) call_module -> ID LPAREN expresion RPAREN .
 
     SEMICOLON       reduce using rule 59 (call_module -> ID LPAREN expresion RPAREN .)
 
 
-state 128
+state 129
 
     (64) condicion -> IF LPAREN expresion RPAREN . n_check_exp bloque ELSE n_else bloque n_fill_end
     (65) condicion -> IF LPAREN expresion RPAREN . n_check_exp bloque n_fill_end
@@ -2089,25 +2106,25 @@ state 128
 
     LBRACKET        reduce using rule 93 (n_check_exp -> .)
 
-    n_check_exp                    shift and go to state 151
+    n_check_exp                    shift and go to state 153
 
-state 129
+state 130
 
     (69) escritura -> PRINT LPAREN escritura_aux RPAREN .
 
     SEMICOLON       reduce using rule 69 (escritura -> PRINT LPAREN escritura_aux RPAREN .)
 
 
-state 130
+state 131
 
     (70) escritura_aux -> expresion n_print . COMA escritura_aux
     (72) escritura_aux -> expresion n_print .
 
-    COMA            shift and go to state 152
+    COMA            shift and go to state 154
     RPAREN          reduce using rule 72 (escritura_aux -> expresion n_print .)
 
 
-state 131
+state 132
 
     (71) escritura_aux -> CTESTRING n_seen_string . n_print COMA escritura_aux
     (73) escritura_aux -> CTESTRING n_seen_string . n_print
@@ -2116,25 +2133,25 @@ state 131
     COMA            reduce using rule 100 (n_print -> .)
     RPAREN          reduce using rule 100 (n_print -> .)
 
-    n_print                        shift and go to state 153
+    n_print                        shift and go to state 155
 
-state 132
+state 133
 
     (66) lectura -> READ LPAREN lect_aux RPAREN .
 
     SEMICOLON       reduce using rule 66 (lectura -> READ LPAREN lect_aux RPAREN .)
 
 
-state 133
+state 134
 
     (67) lect_aux -> ID n_read .
     (68) lect_aux -> ID n_read . COMA lect_aux
 
     RPAREN          reduce using rule 67 (lect_aux -> ID n_read .)
-    COMA            shift and go to state 154
+    COMA            shift and go to state 156
 
 
-state 134
+state 135
 
     (31) expresion -> exp n_gen_and AND . n_add_operator expresion
     (84) n_add_operator -> .
@@ -2145,9 +2162,9 @@ state 134
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 155
+    n_add_operator                 shift and go to state 157
 
-state 135
+state 136
 
     (33) exp -> exp_aux n_gen_or OR . n_add_operator exp
     (84) n_add_operator -> .
@@ -2158,9 +2175,9 @@ state 135
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 156
+    n_add_operator                 shift and go to state 158
 
-state 136
+state 137
 
     (35) exp_aux -> exp_aux2 n_gen_relational GREATERT . n_add_operator exp_aux
     (84) n_add_operator -> .
@@ -2171,9 +2188,9 @@ state 136
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 157
+    n_add_operator                 shift and go to state 159
 
-state 137
+state 138
 
     (36) exp_aux -> exp_aux2 n_gen_relational LESST . n_add_operator exp_aux
     (84) n_add_operator -> .
@@ -2184,9 +2201,9 @@ state 137
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 158
+    n_add_operator                 shift and go to state 160
 
-state 138
+state 139
 
     (37) exp_aux -> exp_aux2 n_gen_relational NOTEQUAL . n_add_operator exp_aux
     (84) n_add_operator -> .
@@ -2197,9 +2214,9 @@ state 138
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 159
+    n_add_operator                 shift and go to state 161
 
-state 139
+state 140
 
     (38) exp_aux -> exp_aux2 n_gen_relational DBEQUALS . n_add_operator exp_aux
     (84) n_add_operator -> .
@@ -2210,9 +2227,9 @@ state 139
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 160
+    n_add_operator                 shift and go to state 162
 
-state 140
+state 141
 
     (39) exp_aux -> exp_aux2 n_gen_relational GREATEREQUAL . n_add_operator exp_aux
     (84) n_add_operator -> .
@@ -2223,9 +2240,9 @@ state 140
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 161
+    n_add_operator                 shift and go to state 163
 
-state 141
+state 142
 
     (40) exp_aux -> exp_aux2 n_gen_relational LESSEQUAL . n_add_operator exp_aux
     (84) n_add_operator -> .
@@ -2236,9 +2253,9 @@ state 141
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 162
+    n_add_operator                 shift and go to state 164
 
-state 142
+state 143
 
     (42) exp_aux2 -> term n_gen_term PLUS . n_add_operator exp_aux2
     (84) n_add_operator -> .
@@ -2249,9 +2266,9 @@ state 142
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 163
+    n_add_operator                 shift and go to state 165
 
-state 143
+state 144
 
     (43) exp_aux2 -> term n_gen_term MINUS . n_add_operator exp_aux2
     (84) n_add_operator -> .
@@ -2262,9 +2279,9 @@ state 143
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 164
+    n_add_operator                 shift and go to state 166
 
-state 144
+state 145
 
     (45) term -> factor n_gen_factor MULTIPLY . n_add_operator term
     (84) n_add_operator -> .
@@ -2275,9 +2292,9 @@ state 144
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 165
+    n_add_operator                 shift and go to state 167
 
-state 145
+state 146
 
     (46) term -> factor n_gen_factor DIVIDE . n_add_operator term
     (84) n_add_operator -> .
@@ -2288,61 +2305,68 @@ state 145
     CTEC            reduce using rule 84 (n_add_operator -> .)
     ID              reduce using rule 84 (n_add_operator -> .)
 
-    n_add_operator                 shift and go to state 166
-
-state 146
-
-    (48) factor -> LPAREN n_push_fake_bottom expresion . RPAREN n_pop_fake_bottom
-
-    RPAREN          shift and go to state 167
-
+    n_add_operator                 shift and go to state 168
 
 state 147
 
-    (62) for -> FOR ID EQUAL expresion . TO expresion DO bloque
-
-    TO              shift and go to state 168
-
-
-state 148
-
-    (63) while -> WHILE n_salto_while LPAREN expresion . RPAREN n_cond_while bloque n_ret_while
+    (48) factor -> LPAREN n_push_fake_bottom expresion . RPAREN n_pop_fake_bottom
 
     RPAREN          shift and go to state 169
 
 
+state 148
+
+    (62) for -> FOR ID EQUAL expresion . TO expresion DO bloque
+
+    TO              shift and go to state 170
+
+
 state 149
 
-    (9) vars_func -> ID n_seen_var_name COLON tipo . n_set_var_type COMA vars_func
-    (10) vars_func -> ID n_seen_var_name COLON tipo . n_set_var_type
+    (63) while -> WHILE n_salto_while LPAREN expresion . RPAREN n_cond_while bloque n_ret_while
+
+    RPAREN          shift and go to state 171
+
+
+state 150
+
+    (53) module -> MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module .
+
+    MAIN            reduce using rule 53 (module -> MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module .)
+
+
+state 151
+
+    (9) vars_func -> ID n_seen_var_name COLON tipo . n_set_var_type n_save_param_type COMA vars_func
+    (10) vars_func -> ID n_seen_var_name COLON tipo . n_set_var_type n_save_param_type
     (77) n_set_var_type -> .
 
     COMA            reduce using rule 77 (n_set_var_type -> .)
     RPAREN          reduce using rule 77 (n_set_var_type -> .)
 
-    n_set_var_type                 shift and go to state 170
+    n_set_var_type                 shift and go to state 172
 
-state 150
+state 152
 
     (30) asignacion -> ID n_seen_factor_id EQUAL n_add_operator expresion . n_assign
     (83) n_assign -> .
 
     SEMICOLON       reduce using rule 83 (n_assign -> .)
 
-    n_assign                       shift and go to state 171
+    n_assign                       shift and go to state 173
 
-state 151
+state 153
 
     (64) condicion -> IF LPAREN expresion RPAREN n_check_exp . bloque ELSE n_else bloque n_fill_end
     (65) condicion -> IF LPAREN expresion RPAREN n_check_exp . bloque n_fill_end
     (18) bloque -> . LBRACKET estatuto_aux RBRACKET
     (19) bloque -> . LBRACKET RBRACKET
 
-    LBRACKET        shift and go to state 173
+    LBRACKET        shift and go to state 175
 
-    bloque                         shift and go to state 172
+    bloque                         shift and go to state 174
 
-state 152
+state 154
 
     (70) escritura_aux -> expresion n_print COMA . escritura_aux
     (70) escritura_aux -> . expresion n_print COMA escritura_aux
@@ -2380,23 +2404,23 @@ state 152
     ID              shift and go to state 92
 
     expresion                      shift and go to state 107
-    escritura_aux                  shift and go to state 174
+    escritura_aux                  shift and go to state 176
     exp                            shift and go to state 83
     exp_aux                        shift and go to state 84
     exp_aux2                       shift and go to state 85
     term                           shift and go to state 86
     factor                         shift and go to state 87
 
-state 153
+state 155
 
     (71) escritura_aux -> CTESTRING n_seen_string n_print . COMA escritura_aux
     (73) escritura_aux -> CTESTRING n_seen_string n_print .
 
-    COMA            shift and go to state 175
+    COMA            shift and go to state 177
     RPAREN          reduce using rule 73 (escritura_aux -> CTESTRING n_seen_string n_print .)
 
 
-state 154
+state 156
 
     (68) lect_aux -> ID n_read COMA . lect_aux
     (67) lect_aux -> . ID n_read
@@ -2404,9 +2428,9 @@ state 154
 
     ID              shift and go to state 110
 
-    lect_aux                       shift and go to state 176
+    lect_aux                       shift and go to state 178
 
-state 155
+state 157
 
     (31) expresion -> exp n_gen_and AND n_add_operator . expresion
     (31) expresion -> . exp n_gen_and AND n_add_operator expresion
@@ -2439,13 +2463,13 @@ state 155
     ID              shift and go to state 92
 
     exp                            shift and go to state 83
-    expresion                      shift and go to state 177
+    expresion                      shift and go to state 179
     exp_aux                        shift and go to state 84
     exp_aux2                       shift and go to state 85
     term                           shift and go to state 86
     factor                         shift and go to state 87
 
-state 156
+state 158
 
     (33) exp -> exp_aux n_gen_or OR n_add_operator . exp
     (33) exp -> . exp_aux n_gen_or OR n_add_operator exp
@@ -2476,80 +2500,14 @@ state 156
     ID              shift and go to state 92
 
     exp_aux                        shift and go to state 84
-    exp                            shift and go to state 178
+    exp                            shift and go to state 180
     exp_aux2                       shift and go to state 85
-    term                           shift and go to state 86
-    factor                         shift and go to state 87
-
-state 157
-
-    (35) exp_aux -> exp_aux2 n_gen_relational GREATERT n_add_operator . exp_aux
-    (35) exp_aux -> . exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux
-    (36) exp_aux -> . exp_aux2 n_gen_relational LESST n_add_operator exp_aux
-    (37) exp_aux -> . exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
-    (38) exp_aux -> . exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux
-    (39) exp_aux -> . exp_aux2 n_gen_relational GREATEREQUAL n_add_operator exp_aux
-    (40) exp_aux -> . exp_aux2 n_gen_relational LESSEQUAL n_add_operator exp_aux
-    (41) exp_aux -> . exp_aux2 n_gen_relational
-    (42) exp_aux2 -> . term n_gen_term PLUS n_add_operator exp_aux2
-    (43) exp_aux2 -> . term n_gen_term MINUS n_add_operator exp_aux2
-    (44) exp_aux2 -> . term n_gen_term
-    (45) term -> . factor n_gen_factor MULTIPLY n_add_operator term
-    (46) term -> . factor n_gen_factor DIVIDE n_add_operator term
-    (47) term -> . factor n_gen_factor
-    (48) factor -> . LPAREN n_push_fake_bottom expresion RPAREN n_pop_fake_bottom
-    (49) factor -> . CTEINT n_seen_factor_int
-    (50) factor -> . CTEF n_seen_factor_float
-    (51) factor -> . CTEC n_seen_factor_char
-    (52) factor -> . ID n_seen_factor_id
-
-    LPAREN          shift and go to state 88
-    CTEINT          shift and go to state 89
-    CTEF            shift and go to state 90
-    CTEC            shift and go to state 91
-    ID              shift and go to state 92
-
-    exp_aux2                       shift and go to state 85
-    exp_aux                        shift and go to state 179
-    term                           shift and go to state 86
-    factor                         shift and go to state 87
-
-state 158
-
-    (36) exp_aux -> exp_aux2 n_gen_relational LESST n_add_operator . exp_aux
-    (35) exp_aux -> . exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux
-    (36) exp_aux -> . exp_aux2 n_gen_relational LESST n_add_operator exp_aux
-    (37) exp_aux -> . exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
-    (38) exp_aux -> . exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux
-    (39) exp_aux -> . exp_aux2 n_gen_relational GREATEREQUAL n_add_operator exp_aux
-    (40) exp_aux -> . exp_aux2 n_gen_relational LESSEQUAL n_add_operator exp_aux
-    (41) exp_aux -> . exp_aux2 n_gen_relational
-    (42) exp_aux2 -> . term n_gen_term PLUS n_add_operator exp_aux2
-    (43) exp_aux2 -> . term n_gen_term MINUS n_add_operator exp_aux2
-    (44) exp_aux2 -> . term n_gen_term
-    (45) term -> . factor n_gen_factor MULTIPLY n_add_operator term
-    (46) term -> . factor n_gen_factor DIVIDE n_add_operator term
-    (47) term -> . factor n_gen_factor
-    (48) factor -> . LPAREN n_push_fake_bottom expresion RPAREN n_pop_fake_bottom
-    (49) factor -> . CTEINT n_seen_factor_int
-    (50) factor -> . CTEF n_seen_factor_float
-    (51) factor -> . CTEC n_seen_factor_char
-    (52) factor -> . ID n_seen_factor_id
-
-    LPAREN          shift and go to state 88
-    CTEINT          shift and go to state 89
-    CTEF            shift and go to state 90
-    CTEC            shift and go to state 91
-    ID              shift and go to state 92
-
-    exp_aux2                       shift and go to state 85
-    exp_aux                        shift and go to state 180
     term                           shift and go to state 86
     factor                         shift and go to state 87
 
 state 159
 
-    (37) exp_aux -> exp_aux2 n_gen_relational NOTEQUAL n_add_operator . exp_aux
+    (35) exp_aux -> exp_aux2 n_gen_relational GREATERT n_add_operator . exp_aux
     (35) exp_aux -> . exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux
     (36) exp_aux -> . exp_aux2 n_gen_relational LESST n_add_operator exp_aux
     (37) exp_aux -> . exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
@@ -2582,7 +2540,7 @@ state 159
 
 state 160
 
-    (38) exp_aux -> exp_aux2 n_gen_relational DBEQUALS n_add_operator . exp_aux
+    (36) exp_aux -> exp_aux2 n_gen_relational LESST n_add_operator . exp_aux
     (35) exp_aux -> . exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux
     (36) exp_aux -> . exp_aux2 n_gen_relational LESST n_add_operator exp_aux
     (37) exp_aux -> . exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
@@ -2615,7 +2573,7 @@ state 160
 
 state 161
 
-    (39) exp_aux -> exp_aux2 n_gen_relational GREATEREQUAL n_add_operator . exp_aux
+    (37) exp_aux -> exp_aux2 n_gen_relational NOTEQUAL n_add_operator . exp_aux
     (35) exp_aux -> . exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux
     (36) exp_aux -> . exp_aux2 n_gen_relational LESST n_add_operator exp_aux
     (37) exp_aux -> . exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
@@ -2648,7 +2606,7 @@ state 161
 
 state 162
 
-    (40) exp_aux -> exp_aux2 n_gen_relational LESSEQUAL n_add_operator . exp_aux
+    (38) exp_aux -> exp_aux2 n_gen_relational DBEQUALS n_add_operator . exp_aux
     (35) exp_aux -> . exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux
     (36) exp_aux -> . exp_aux2 n_gen_relational LESST n_add_operator exp_aux
     (37) exp_aux -> . exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
@@ -2681,6 +2639,72 @@ state 162
 
 state 163
 
+    (39) exp_aux -> exp_aux2 n_gen_relational GREATEREQUAL n_add_operator . exp_aux
+    (35) exp_aux -> . exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux
+    (36) exp_aux -> . exp_aux2 n_gen_relational LESST n_add_operator exp_aux
+    (37) exp_aux -> . exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
+    (38) exp_aux -> . exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux
+    (39) exp_aux -> . exp_aux2 n_gen_relational GREATEREQUAL n_add_operator exp_aux
+    (40) exp_aux -> . exp_aux2 n_gen_relational LESSEQUAL n_add_operator exp_aux
+    (41) exp_aux -> . exp_aux2 n_gen_relational
+    (42) exp_aux2 -> . term n_gen_term PLUS n_add_operator exp_aux2
+    (43) exp_aux2 -> . term n_gen_term MINUS n_add_operator exp_aux2
+    (44) exp_aux2 -> . term n_gen_term
+    (45) term -> . factor n_gen_factor MULTIPLY n_add_operator term
+    (46) term -> . factor n_gen_factor DIVIDE n_add_operator term
+    (47) term -> . factor n_gen_factor
+    (48) factor -> . LPAREN n_push_fake_bottom expresion RPAREN n_pop_fake_bottom
+    (49) factor -> . CTEINT n_seen_factor_int
+    (50) factor -> . CTEF n_seen_factor_float
+    (51) factor -> . CTEC n_seen_factor_char
+    (52) factor -> . ID n_seen_factor_id
+
+    LPAREN          shift and go to state 88
+    CTEINT          shift and go to state 89
+    CTEF            shift and go to state 90
+    CTEC            shift and go to state 91
+    ID              shift and go to state 92
+
+    exp_aux2                       shift and go to state 85
+    exp_aux                        shift and go to state 185
+    term                           shift and go to state 86
+    factor                         shift and go to state 87
+
+state 164
+
+    (40) exp_aux -> exp_aux2 n_gen_relational LESSEQUAL n_add_operator . exp_aux
+    (35) exp_aux -> . exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux
+    (36) exp_aux -> . exp_aux2 n_gen_relational LESST n_add_operator exp_aux
+    (37) exp_aux -> . exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux
+    (38) exp_aux -> . exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux
+    (39) exp_aux -> . exp_aux2 n_gen_relational GREATEREQUAL n_add_operator exp_aux
+    (40) exp_aux -> . exp_aux2 n_gen_relational LESSEQUAL n_add_operator exp_aux
+    (41) exp_aux -> . exp_aux2 n_gen_relational
+    (42) exp_aux2 -> . term n_gen_term PLUS n_add_operator exp_aux2
+    (43) exp_aux2 -> . term n_gen_term MINUS n_add_operator exp_aux2
+    (44) exp_aux2 -> . term n_gen_term
+    (45) term -> . factor n_gen_factor MULTIPLY n_add_operator term
+    (46) term -> . factor n_gen_factor DIVIDE n_add_operator term
+    (47) term -> . factor n_gen_factor
+    (48) factor -> . LPAREN n_push_fake_bottom expresion RPAREN n_pop_fake_bottom
+    (49) factor -> . CTEINT n_seen_factor_int
+    (50) factor -> . CTEF n_seen_factor_float
+    (51) factor -> . CTEC n_seen_factor_char
+    (52) factor -> . ID n_seen_factor_id
+
+    LPAREN          shift and go to state 88
+    CTEINT          shift and go to state 89
+    CTEF            shift and go to state 90
+    CTEC            shift and go to state 91
+    ID              shift and go to state 92
+
+    exp_aux2                       shift and go to state 85
+    exp_aux                        shift and go to state 186
+    term                           shift and go to state 86
+    factor                         shift and go to state 87
+
+state 165
+
     (42) exp_aux2 -> term n_gen_term PLUS n_add_operator . exp_aux2
     (42) exp_aux2 -> . term n_gen_term PLUS n_add_operator exp_aux2
     (43) exp_aux2 -> . term n_gen_term MINUS n_add_operator exp_aux2
@@ -2701,10 +2725,10 @@ state 163
     ID              shift and go to state 92
 
     term                           shift and go to state 86
-    exp_aux2                       shift and go to state 185
+    exp_aux2                       shift and go to state 187
     factor                         shift and go to state 87
 
-state 164
+state 166
 
     (43) exp_aux2 -> term n_gen_term MINUS n_add_operator . exp_aux2
     (42) exp_aux2 -> . term n_gen_term PLUS n_add_operator exp_aux2
@@ -2726,10 +2750,10 @@ state 164
     ID              shift and go to state 92
 
     term                           shift and go to state 86
-    exp_aux2                       shift and go to state 186
+    exp_aux2                       shift and go to state 188
     factor                         shift and go to state 87
 
-state 165
+state 167
 
     (45) term -> factor n_gen_factor MULTIPLY n_add_operator . term
     (45) term -> . factor n_gen_factor MULTIPLY n_add_operator term
@@ -2748,9 +2772,9 @@ state 165
     ID              shift and go to state 92
 
     factor                         shift and go to state 87
-    term                           shift and go to state 187
+    term                           shift and go to state 189
 
-state 166
+state 168
 
     (46) term -> factor n_gen_factor DIVIDE n_add_operator . term
     (45) term -> . factor n_gen_factor MULTIPLY n_add_operator term
@@ -2769,9 +2793,9 @@ state 166
     ID              shift and go to state 92
 
     factor                         shift and go to state 87
-    term                           shift and go to state 188
+    term                           shift and go to state 190
 
-state 167
+state 169
 
     (48) factor -> LPAREN n_push_fake_bottom expresion RPAREN . n_pop_fake_bottom
     (91) n_pop_fake_bottom -> .
@@ -2794,9 +2818,9 @@ state 167
     TO              reduce using rule 91 (n_pop_fake_bottom -> .)
     DO              reduce using rule 91 (n_pop_fake_bottom -> .)
 
-    n_pop_fake_bottom              shift and go to state 189
+    n_pop_fake_bottom              shift and go to state 191
 
-state 168
+state 170
 
     (62) for -> FOR ID EQUAL expresion TO . expresion DO bloque
     (31) expresion -> . exp n_gen_and AND n_add_operator expresion
@@ -2828,50 +2852,52 @@ state 168
     CTEC            shift and go to state 91
     ID              shift and go to state 92
 
-    expresion                      shift and go to state 190
+    expresion                      shift and go to state 192
     exp                            shift and go to state 83
     exp_aux                        shift and go to state 84
     exp_aux2                       shift and go to state 85
     term                           shift and go to state 86
     factor                         shift and go to state 87
 
-state 169
+state 171
 
     (63) while -> WHILE n_salto_while LPAREN expresion RPAREN . n_cond_while bloque n_ret_while
     (97) n_cond_while -> .
 
     LBRACKET        reduce using rule 97 (n_cond_while -> .)
 
-    n_cond_while                   shift and go to state 191
+    n_cond_while                   shift and go to state 193
 
-state 170
+state 172
 
-    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type . COMA vars_func
-    (10) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type .
+    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type . n_save_param_type COMA vars_func
+    (10) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type . n_save_param_type
+    (101) n_save_param_type -> .
 
-    COMA            shift and go to state 192
-    RPAREN          reduce using rule 10 (vars_func -> ID n_seen_var_name COLON tipo n_set_var_type .)
+    COMA            reduce using rule 101 (n_save_param_type -> .)
+    RPAREN          reduce using rule 101 (n_save_param_type -> .)
 
+    n_save_param_type              shift and go to state 194
 
-state 171
+state 173
 
     (30) asignacion -> ID n_seen_factor_id EQUAL n_add_operator expresion n_assign .
 
     SEMICOLON       reduce using rule 30 (asignacion -> ID n_seen_factor_id EQUAL n_add_operator expresion n_assign .)
 
 
-state 172
+state 174
 
     (64) condicion -> IF LPAREN expresion RPAREN n_check_exp bloque . ELSE n_else bloque n_fill_end
     (65) condicion -> IF LPAREN expresion RPAREN n_check_exp bloque . n_fill_end
     (94) n_fill_end -> .
 
-    ELSE            shift and go to state 193
+    ELSE            shift and go to state 195
     SEMICOLON       reduce using rule 94 (n_fill_end -> .)
 
-    n_fill_end                     shift and go to state 194
+    n_fill_end                     shift and go to state 196
 
-state 173
+state 175
 
     (18) bloque -> LBRACKET . estatuto_aux RBRACKET
     (19) bloque -> LBRACKET . RBRACKET
@@ -2896,7 +2922,7 @@ state 173
     (59) call_module -> . ID LPAREN expresion RPAREN
     (60) call_module -> . ID LPAREN RPAREN
 
-    RBRACKET        shift and go to state 196
+    RBRACKET        shift and go to state 198
     ID              shift and go to state 52
     IF              shift and go to state 53
     PRINT           shift and go to state 54
@@ -2905,7 +2931,7 @@ state 173
     FOR             shift and go to state 57
     WHILE           shift and go to state 58
 
-    estatuto_aux                   shift and go to state 195
+    estatuto_aux                   shift and go to state 197
     estatuto                       shift and go to state 43
     asignacion                     shift and go to state 44
     condicion                      shift and go to state 45
@@ -2916,14 +2942,14 @@ state 173
     while                          shift and go to state 50
     call_module                    shift and go to state 51
 
-state 174
+state 176
 
     (70) escritura_aux -> expresion n_print COMA escritura_aux .
 
     RPAREN          reduce using rule 70 (escritura_aux -> expresion n_print COMA escritura_aux .)
 
 
-state 175
+state 177
 
     (71) escritura_aux -> CTESTRING n_seen_string n_print COMA . escritura_aux
     (70) escritura_aux -> . expresion n_print COMA escritura_aux
@@ -2960,7 +2986,7 @@ state 175
     CTEC            shift and go to state 91
     ID              shift and go to state 92
 
-    escritura_aux                  shift and go to state 197
+    escritura_aux                  shift and go to state 199
     expresion                      shift and go to state 107
     exp                            shift and go to state 83
     exp_aux                        shift and go to state 84
@@ -2968,14 +2994,14 @@ state 175
     term                           shift and go to state 86
     factor                         shift and go to state 87
 
-state 176
+state 178
 
     (68) lect_aux -> ID n_read COMA lect_aux .
 
     RPAREN          reduce using rule 68 (lect_aux -> ID n_read COMA lect_aux .)
 
 
-state 177
+state 179
 
     (31) expresion -> exp n_gen_and AND n_add_operator expresion .
 
@@ -2986,7 +3012,7 @@ state 177
     DO              reduce using rule 31 (expresion -> exp n_gen_and AND n_add_operator expresion .)
 
 
-state 178
+state 180
 
     (33) exp -> exp_aux n_gen_or OR n_add_operator exp .
 
@@ -2998,7 +3024,7 @@ state 178
     DO              reduce using rule 33 (exp -> exp_aux n_gen_or OR n_add_operator exp .)
 
 
-state 179
+state 181
 
     (35) exp_aux -> exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux .
 
@@ -3011,7 +3037,7 @@ state 179
     DO              reduce using rule 35 (exp_aux -> exp_aux2 n_gen_relational GREATERT n_add_operator exp_aux .)
 
 
-state 180
+state 182
 
     (36) exp_aux -> exp_aux2 n_gen_relational LESST n_add_operator exp_aux .
 
@@ -3024,7 +3050,7 @@ state 180
     DO              reduce using rule 36 (exp_aux -> exp_aux2 n_gen_relational LESST n_add_operator exp_aux .)
 
 
-state 181
+state 183
 
     (37) exp_aux -> exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux .
 
@@ -3037,7 +3063,7 @@ state 181
     DO              reduce using rule 37 (exp_aux -> exp_aux2 n_gen_relational NOTEQUAL n_add_operator exp_aux .)
 
 
-state 182
+state 184
 
     (38) exp_aux -> exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux .
 
@@ -3050,7 +3076,7 @@ state 182
     DO              reduce using rule 38 (exp_aux -> exp_aux2 n_gen_relational DBEQUALS n_add_operator exp_aux .)
 
 
-state 183
+state 185
 
     (39) exp_aux -> exp_aux2 n_gen_relational GREATEREQUAL n_add_operator exp_aux .
 
@@ -3063,7 +3089,7 @@ state 183
     DO              reduce using rule 39 (exp_aux -> exp_aux2 n_gen_relational GREATEREQUAL n_add_operator exp_aux .)
 
 
-state 184
+state 186
 
     (40) exp_aux -> exp_aux2 n_gen_relational LESSEQUAL n_add_operator exp_aux .
 
@@ -3076,7 +3102,7 @@ state 184
     DO              reduce using rule 40 (exp_aux -> exp_aux2 n_gen_relational LESSEQUAL n_add_operator exp_aux .)
 
 
-state 185
+state 187
 
     (42) exp_aux2 -> term n_gen_term PLUS n_add_operator exp_aux2 .
 
@@ -3095,7 +3121,7 @@ state 185
     DO              reduce using rule 42 (exp_aux2 -> term n_gen_term PLUS n_add_operator exp_aux2 .)
 
 
-state 186
+state 188
 
     (43) exp_aux2 -> term n_gen_term MINUS n_add_operator exp_aux2 .
 
@@ -3114,7 +3140,7 @@ state 186
     DO              reduce using rule 43 (exp_aux2 -> term n_gen_term MINUS n_add_operator exp_aux2 .)
 
 
-state 187
+state 189
 
     (45) term -> factor n_gen_factor MULTIPLY n_add_operator term .
 
@@ -3135,7 +3161,7 @@ state 187
     DO              reduce using rule 45 (term -> factor n_gen_factor MULTIPLY n_add_operator term .)
 
 
-state 188
+state 190
 
     (46) term -> factor n_gen_factor DIVIDE n_add_operator term .
 
@@ -3156,7 +3182,7 @@ state 188
     DO              reduce using rule 46 (term -> factor n_gen_factor DIVIDE n_add_operator term .)
 
 
-state 189
+state 191
 
     (48) factor -> LPAREN n_push_fake_bottom expresion RPAREN n_pop_fake_bottom .
 
@@ -3179,57 +3205,56 @@ state 189
     DO              reduce using rule 48 (factor -> LPAREN n_push_fake_bottom expresion RPAREN n_pop_fake_bottom .)
 
 
-state 190
+state 192
 
     (62) for -> FOR ID EQUAL expresion TO expresion . DO bloque
 
-    DO              shift and go to state 198
+    DO              shift and go to state 200
 
 
-state 191
+state 193
 
     (63) while -> WHILE n_salto_while LPAREN expresion RPAREN n_cond_while . bloque n_ret_while
     (18) bloque -> . LBRACKET estatuto_aux RBRACKET
     (19) bloque -> . LBRACKET RBRACKET
 
-    LBRACKET        shift and go to state 173
+    LBRACKET        shift and go to state 175
 
-    bloque                         shift and go to state 199
+    bloque                         shift and go to state 201
 
-state 192
+state 194
 
-    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA . vars_func
-    (9) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
-    (10) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type
+    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type . COMA vars_func
+    (10) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type .
 
-    ID              shift and go to state 64
+    COMA            shift and go to state 202
+    RPAREN          reduce using rule 10 (vars_func -> ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type .)
 
-    vars_func                      shift and go to state 200
 
-state 193
+state 195
 
     (64) condicion -> IF LPAREN expresion RPAREN n_check_exp bloque ELSE . n_else bloque n_fill_end
     (95) n_else -> .
 
     LBRACKET        reduce using rule 95 (n_else -> .)
 
-    n_else                         shift and go to state 201
+    n_else                         shift and go to state 203
 
-state 194
+state 196
 
     (65) condicion -> IF LPAREN expresion RPAREN n_check_exp bloque n_fill_end .
 
     SEMICOLON       reduce using rule 65 (condicion -> IF LPAREN expresion RPAREN n_check_exp bloque n_fill_end .)
 
 
-state 195
+state 197
 
     (18) bloque -> LBRACKET estatuto_aux . RBRACKET
 
-    RBRACKET        shift and go to state 202
+    RBRACKET        shift and go to state 204
 
 
-state 196
+state 198
 
     (19) bloque -> LBRACKET RBRACKET .
 
@@ -3237,50 +3262,53 @@ state 196
     SEMICOLON       reduce using rule 19 (bloque -> LBRACKET RBRACKET .)
 
 
-state 197
+state 199
 
     (71) escritura_aux -> CTESTRING n_seen_string n_print COMA escritura_aux .
 
     RPAREN          reduce using rule 71 (escritura_aux -> CTESTRING n_seen_string n_print COMA escritura_aux .)
 
 
-state 198
+state 200
 
     (62) for -> FOR ID EQUAL expresion TO expresion DO . bloque
     (18) bloque -> . LBRACKET estatuto_aux RBRACKET
     (19) bloque -> . LBRACKET RBRACKET
 
-    LBRACKET        shift and go to state 173
+    LBRACKET        shift and go to state 175
 
-    bloque                         shift and go to state 203
+    bloque                         shift and go to state 205
 
-state 199
+state 201
 
     (63) while -> WHILE n_salto_while LPAREN expresion RPAREN n_cond_while bloque . n_ret_while
     (98) n_ret_while -> .
 
     SEMICOLON       reduce using rule 98 (n_ret_while -> .)
 
-    n_ret_while                    shift and go to state 204
+    n_ret_while                    shift and go to state 206
 
-state 200
+state 202
 
-    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func .
+    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type COMA . vars_func
+    (9) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type COMA vars_func
+    (10) vars_func -> . ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type
 
-    RPAREN          reduce using rule 9 (vars_func -> ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func .)
+    ID              shift and go to state 64
 
+    vars_func                      shift and go to state 207
 
-state 201
+state 203
 
     (64) condicion -> IF LPAREN expresion RPAREN n_check_exp bloque ELSE n_else . bloque n_fill_end
     (18) bloque -> . LBRACKET estatuto_aux RBRACKET
     (19) bloque -> . LBRACKET RBRACKET
 
-    LBRACKET        shift and go to state 173
+    LBRACKET        shift and go to state 175
 
-    bloque                         shift and go to state 205
+    bloque                         shift and go to state 208
 
-state 202
+state 204
 
     (18) bloque -> LBRACKET estatuto_aux RBRACKET .
 
@@ -3288,30 +3316,37 @@ state 202
     SEMICOLON       reduce using rule 18 (bloque -> LBRACKET estatuto_aux RBRACKET .)
 
 
-state 203
+state 205
 
     (62) for -> FOR ID EQUAL expresion TO expresion DO bloque .
 
     SEMICOLON       reduce using rule 62 (for -> FOR ID EQUAL expresion TO expresion DO bloque .)
 
 
-state 204
+state 206
 
     (63) while -> WHILE n_salto_while LPAREN expresion RPAREN n_cond_while bloque n_ret_while .
 
     SEMICOLON       reduce using rule 63 (while -> WHILE n_salto_while LPAREN expresion RPAREN n_cond_while bloque n_ret_while .)
 
 
-state 205
+state 207
+
+    (9) vars_func -> ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type COMA vars_func .
+
+    RPAREN          reduce using rule 9 (vars_func -> ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type COMA vars_func .)
+
+
+state 208
 
     (64) condicion -> IF LPAREN expresion RPAREN n_check_exp bloque ELSE n_else bloque . n_fill_end
     (94) n_fill_end -> .
 
     SEMICOLON       reduce using rule 94 (n_fill_end -> .)
 
-    n_fill_end                     shift and go to state 206
+    n_fill_end                     shift and go to state 209
 
-state 206
+state 209
 
     (64) condicion -> IF LPAREN expresion RPAREN n_check_exp bloque ELSE n_else bloque n_fill_end .
 

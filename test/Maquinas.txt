@@ -1,12 +1,24 @@
 program Example;
 var aux1: int; aux2: int; aux3: int; aux4: int.
+module int func (hola:int) {
+  var pepe: float.
 
+  hola = aux2;
+  hola = aux3;
+}
 main {
+  aux1 =5;
   aux2 =3; 
   aux3 =4;
   aux4 =2;
-  read(aux1);
-  print(aux2);
-  print(aux4);
+
+  if(aux1 > aux2 && aux1 == 5){
+
+    
+    aux2 = aux2 +1;
+};
+
+print(aux2);
+print(aux4);
   
 }

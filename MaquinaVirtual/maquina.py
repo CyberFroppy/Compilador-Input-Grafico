@@ -69,7 +69,7 @@ def read(address, depth=-1):
         return
     return val
 
-#Funcion para agregttar valores a la memoria
+#Funcion para agregrar valores a la memoria
 def write(address, value, depth=-1):
     global mem_local, mem_global
     # if address >= 3000 and address < 6000:

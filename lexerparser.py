@@ -389,6 +389,8 @@ symbol_table = {
         'vars': {},
     }
 }
+param_table = []
+param_count = 0
 
 constant_table = {}
 next_constant_int = 0
@@ -430,6 +432,8 @@ def print_todo():
     pp.pprint(cuadruplos)
     print('pila de saltos: ')
     pp.pprint(pila_saltos)
+    print('Tabla de parametros: ')
+    pp.pprint(param_table)
 
 ############### PARSER ###############
 
@@ -458,8 +462,8 @@ def p_vars_aux(p):
                 | ID n_seen_var_name COLON tipo n_set_var_type DOT'''
 
 def p_vars_func(p):
-    '''vars_func : ID n_seen_var_name COLON tipo n_set_var_type COMA vars_func
-                 | ID n_seen_var_name COLON tipo n_set_var_type'''
+    '''vars_func : ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type COMA vars_func
+                 | ID n_seen_var_name COLON tipo n_set_var_type n_save_param_type'''
 
 def p_tipo(p):
     '''tipo : INT n_seen_type
@@ -542,10 +546,10 @@ def p_factor(p):
 
 
 def p_module(p):
-    '''module : MODULE VOID n_seen_type ID n_seen_func_name params bloque_module module
-              | MODULE tipo ID n_seen_func_name params bloque_module module
-              | MODULE VOID n_seen_type ID n_seen_func_name params bloque_module
-              | MODULE tipo ID n_seen_func_name params bloque_module'''
+    '''module : MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module
+              | MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module module
+              | MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module
+              | MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module'''
 
 def p_params(p):
     '''params : LPAREN vars_func RPAREN
@@ -637,6 +641,7 @@ def p_n_seen_func_name(p):
     next_local_float = 5000
     next_local_char = 6000
     next_local_bool = 7000
+    search_func(p[-1])
     symbol_table[p[-1]] = {
         'vars': {},
         'type': current_type,
@@ -747,6 +752,14 @@ def search_address(id):
         return symbol_table['#global']['vars'][id]['address']
     else:
         error('No se encontró el address de la variable ' + id)
+
+
+# Funcion para comprobar que la funcion no existe en la tabla de simbolos
+def search_func(func):
+    global symbol_table, current_func
+    if func in symbol_table:
+        error('La funcion {} ya existe'.format(func))
+
 
 #Funcion para poder agregar a sus respectivas pilas los operandos y los tipos
 def p_n_seen_factor_id(p):
@@ -1027,6 +1040,18 @@ def p_n_print(p):
         pila_tipos.pop()
 
 ################################# FUNCIONES  #################################
+
+# Funcion para poder guardar el tipo de los parametros de cada funcion 
+def p_n_save_param_type(p):
+    'n_save_param_type : '
+    global param_table, current_type, current_func,current_var
+    param_table.append([current_func,current_type])
+
+# Punto neuralgico para 
+def p_n_gen_funcquad(p):
+    'n_gen_func_quad : '
+    global cuadruplos, pila_saltos
+    pila_saltos.append(len(cuadruplos))
 
 
 ############### END ###############
