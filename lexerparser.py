@@ -546,10 +546,10 @@ def p_factor(p):
 
 
 def p_module(p):
-    '''module : MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module module
-              | MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module module
-              | MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module
-              | MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module'''
+    '''module : MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module n_endfunc module 
+              | MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module n_endfunc module 
+              | MODULE VOID n_seen_type ID n_seen_func_name params n_gen_func_quad bloque_module n_endfunc
+              | MODULE tipo ID n_seen_func_name params n_gen_func_quad bloque_module n_endfunc'''
 
 def p_params(p):
     '''params : LPAREN vars_func RPAREN
@@ -633,27 +633,12 @@ def p_n_seen_var_name(p):
         }
         current_var = p[-1]
     
-# Punto neuralgico para el manejo de las direcciones de las variables de cada funcion y el tipo de funcion
-def p_n_seen_func_name(p):
-    'n_seen_func_name : '
-    global symbol_table, current_func, current_type, next_local_int, next_local_float, next_local_char,next_local_bool, cuadruplos
-    next_local_int = 4000
-    next_local_float = 5000
-    next_local_char = 6000
-    next_local_bool = 7000
-    search_func(p[-1])
-    symbol_table[p[-1]] = {
-        'vars': {},
-        'type': current_type,
-        'start': len(cuadruplos)
-    }
-    current_func = p[-1]
 
 # Funcion que ayuda con el manejo de direcciones de las variables globales y locales
 def get_next_var_address():
     global current_func, current_type, next_global_int, next_global_float, next_global_char,next_global_bool, next_local_int, next_local_float, next_local_char, next_local_bool
     aux = 0
-    if current_func == '#global':
+    if current_func == '#global' or 'main':
         if current_type == 'int':
             if next_global_int > 8999: 
                 error('Exceso de variables globales {}'.format(current_type))
@@ -752,13 +737,6 @@ def search_address(id):
         return symbol_table['#global']['vars'][id]['address']
     else:
         error('No se encontró el address de la variable ' + id)
-
-
-# Funcion para comprobar que la funcion no existe en la tabla de simbolos
-def search_func(func):
-    global symbol_table, current_func
-    if func in symbol_table:
-        error('La funcion {} ya existe'.format(func))
 
 
 #Funcion para poder agregar a sus respectivas pilas los operandos y los tipos
@@ -1052,6 +1030,43 @@ def p_n_gen_funcquad(p):
     'n_gen_func_quad : '
     global cuadruplos, pila_saltos
     pila_saltos.append(len(cuadruplos))
+
+# Punto neuralgico para el manejo de las direcciones de las variables de cada funcion y el tipo de funcion
+def p_n_seen_func_name(p):
+    'n_seen_func_name : '
+    global symbol_table, current_func, current_type, next_local_int
+    global  next_local_float, next_local_char,next_local_bool, cuadruplos, symbol_table
+    next_local_int = 4000
+    next_local_float = 5000
+    next_local_char = 6000
+    next_local_bool = 7000
+    func_name = p[-1]
+    # Revisa que no se repita la funcion
+    if func_name in symbol_table:
+        error('La funcion {} ya existe'.format(func_name))
+
+    # Crear variable global con nombre y tipo de la funcion excepto void 
+    if func_name in symbol_table['#global']['vars']:
+        error('Mismo nombre que variable global de la funcion {}'.format(func_name))
+    else:
+        # Crea variable global para el retorno de la funcion
+        symbol_table['#global']['vars'][func_name] = {
+            'type': current_type,
+            'address': get_next_var_address()
+        }
+        
+    symbol_table[p[-1]] = {
+        'vars': {},
+        'type': current_type,
+        'start': len(cuadruplos)
+    }
+    current_func = p[-1]
+
+# Se genera el cuadruplo para terminar la funcion 
+def p_n_endfunc(p):
+    'n_endfunc : '
+    global symbol_table, cuadruplos
+    cuadruplos.append(['ENDFUNC', '-', '-', '-'])
 
 
 ############### END ###############
