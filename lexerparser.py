@@ -559,8 +559,8 @@ def p_params(p):
               | LPAREN RPAREN'''
 
 def p_call_module(p):
-    '''call_module : ID n_func_exist LPAREN aux_call_module n_verify_num_params RPAREN n_gen_gosub
-                   | ID n_func_exist LPAREN RPAREN n_gen_gosub'''
+    '''call_module : ID n_func_exist n_gen_era LPAREN aux_call_module n_verify_num_params RPAREN n_gen_gosub
+                   | ID n_func_exist n_gen_era LPAREN RPAREN n_gen_gosub'''
 
 def p_aux_call_module(p):
     '''aux_call_module : expresion n_check_param

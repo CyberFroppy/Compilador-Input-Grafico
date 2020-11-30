@@ -28,8 +28,6 @@ global current
 
 #Funcion para encontrar los valores en la memoria
 def read(address, depth=-1):
-    # val = mem_local[depth].get(address, None)
-    # if not val:
     #Casteo para la comparacion
     address_n = int(address)
     val = None
@@ -44,14 +42,14 @@ def read(address, depth=-1):
         val = int(mem_global.get(address, None))
 
     #Leer variables locales y casteralas adecuadamente
-    if address_n >= 4000 and address_n < 5000:
-        val = int(mem_global.get(address, None))
+    elif address_n >= 4000 and address_n < 5000:
+        val = int(mem_local[depth].get(address, None))
     elif address_n >= 5000 and address_n < 6000:
-        val = float(mem_global.get(address, None))
+        val = float(mem_local[depth].get(address, None))
     elif address_n >= 6000 and address_n < 7000:
-        val = chr(mem_global.get(address, None))
+        val = chr(mem_local[depth].get(address, None))
     elif address_n >= 7000 and address_n < 8000:
-        val = int(mem_global.get(address, None))
+        val = int(mem_local[depth].get(address, None))
 
     #Leer constantes y castearlas adecuadamente
     elif address_n >= 0 and address_n < 1000:
@@ -69,13 +67,13 @@ def read(address, depth=-1):
         return
     return val
 
-#Funcion para agregrar valores a la memoria
+#Funcion para agregttar valores a la memoria
 def write(address, value, depth=-1):
     global mem_local, mem_global
-    # if address >= 3000 and address < 6000:
-    #     mem_local[depth][address] = value
-    # else: 
-    mem_global[address] = value
+    if address >= 3000 and address < 6000:
+         mem_local[depth][address] = value
+    else: 
+        mem_global[address] = value
 
 
 current = [0]
@@ -139,6 +137,7 @@ while current[-1] != -1:
         #TODO: verificar que el input esta correcto!
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
+    #Menor que
     elif cuadruplos[current[-1]][0] == '>':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
@@ -148,6 +147,7 @@ while current[-1] != -1:
             res = 1
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
+    #Mayor que
     elif cuadruplos[current[-1]][0] == '<':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
@@ -157,6 +157,7 @@ while current[-1] != -1:
             res = 1
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
+    #Igual
     elif cuadruplos[current[-1]][0] == '==':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
@@ -166,6 +167,7 @@ while current[-1] != -1:
             res = 1
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
+    #Mayor igual
     elif cuadruplos[current[-1]][0] == '>=':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
@@ -175,6 +177,7 @@ while current[-1] != -1:
             res = 1
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
+    #Menor igual
     elif cuadruplos[current[-1]][0] == '<=':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
@@ -184,6 +187,7 @@ while current[-1] != -1:
             res = 1
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
+    #No igual
     elif cuadruplos[current[-1]][0] == '!=':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
@@ -193,6 +197,7 @@ while current[-1] != -1:
             res = 1
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
+    #And
     elif cuadruplos[current[-1]][0] == '&&':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
@@ -202,6 +207,7 @@ while current[-1] != -1:
             res = 1
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
+    #Or
     elif cuadruplos[current[-1]][0] == '|':
         valor1 = read(cuadruplos[current[-1]][1])
         valor2 = read(cuadruplos[current[-1]][2])
@@ -211,15 +217,29 @@ while current[-1] != -1:
             res = 1
         write(cuadruplos[current[-1]][3], res)
         current[-1] = current[-1]+1
+    #Goto en falso
     elif cuadruplos[current[-1]][0] == 'GOTOF':
         valor1 = read(cuadruplos[current[-1]][1])
         if valor1 == 1:
             current[-1] = cuadruplos[current[-1]][3]
         else:
             current[-1] = current[-1] + 1
+    #Goto
     elif cuadruplos[current[-1]][0] == 'GOTO':
         current[-1] = cuadruplos[current[-1]][3]
     
+    #ERA para la memoria de la funcion
+    elif cuadruplos[current[-1]][0] == 'ERA':
+         cuadruplos[-1][3]
+
+
+    #Final de funcion
+    elif cuadruplos[current[-1]][0] == 'RETURN':
+    
+
+
     else:
         print('Instruccion no implementada: ', cuadruplos[current[-1]][0])
         current[-1] = -1
+    
+    print(cuadruplos[current[-1]][0])
