@@ -15,10 +15,11 @@ with open(program_name, 'r') as file:
 
 
 #Estructuras de memoria local y constantes
-global mem_global, mem_local, constant_table
+global mem_global, mem_local, constant_table, current_func
 mem_global = {}
 mem_local = []
 constant_table = {}
+current_func = 'main'
 
 #Loop para voltear los valores de la tabala de constantes
 for key, val in raw_constant_table.items():
@@ -37,7 +38,7 @@ def read(address, depth=-1):
     elif address_n >= 9000 and address_n < 10000:
         val = float(mem_global.get(address, None))
     elif address_n >= 10000 and address_n < 11000:
-        val = chr(mem_global.get(address, None))
+        val = str(mem_global.get(address, None))
     elif address_n >= 11000 and address_n < 12000:
         val = int(mem_global.get(address, None))
 
@@ -47,7 +48,7 @@ def read(address, depth=-1):
     elif address_n >= 5000 and address_n < 6000:
         val = float(mem_local[depth].get(address, None))
     elif address_n >= 6000 and address_n < 7000:
-        val = chr(mem_local[depth].get(address, None))
+        val = str(mem_local[depth].get(address, None))
     elif address_n >= 7000 and address_n < 8000:
         val = int(mem_local[depth].get(address, None))
 
@@ -57,11 +58,10 @@ def read(address, depth=-1):
     elif address_n >= 1000 and address_n < 2000:
         val = float(constant_table.get(address, None))
     elif address_n >= 2000 and address_n < 3000:
-        val = chr(constant_table.get(address, None))
+        val = str(constant_table.get(address, None))
     elif address_n >= 3000 and address_n < 4000:
         val = constant_table.get(address, None)
     if val is None:
-        print(val)
         error('Acceso a variable no asignada')
         current = -1
         return
@@ -70,23 +70,29 @@ def read(address, depth=-1):
 #Funcion para agregttar valores a la memoria
 def write(address, value, depth=-1):
     global mem_local, mem_global
-    if address >= 3000 and address < 6000:
-         mem_local[depth][address] = value
+    address_n = int(address)
+    
+    if address_n >= 3000 and address_n < 6000:
+        mem_local[depth][address_n] = value
     else: 
-        mem_global[address] = value
+        mem_global[address_n] = value
 
 
 current = [0]
 while current[-1] != -1:
+    # print(cuadruplos[current[-1]])
     if cuadruplos[current[-1]][0] == 'START':
+        # Append de memoria local del main.
+        mem_local.append({})
+        # Apuntar current al inicio del bloque main.
         current[-1] = cuadruplos[current[-1]][3]
     elif cuadruplos[current[-1]][0] == 'END':
-        print("Memoria Global: ")
-        print(mem_global)
-        print("Memoria Local: ")
-        print(mem_local)
-        print("Tabla de Constantes: ")
-        print(constant_table)
+        # print("Memoria Global: ")
+        # print(mem_global)
+        # print("Memoria Local: ")
+        # print(mem_local)
+        # print("Tabla de Constantes: ")
+        # print(constant_table)
         current[-1] = -1
     #Sumar    
     elif cuadruplos[current[-1]][0] == '+':
@@ -122,7 +128,6 @@ while current[-1] != -1:
         current[-1] = current[-1]+1
     #Asignar
     elif cuadruplos[current[-1]][0] == '=':
-        
         valor1 = read(cuadruplos[current[-1]][1])
         write(cuadruplos[current[-1]][3], valor1)
         current[-1] = current[-1]+1
@@ -131,6 +136,7 @@ while current[-1] != -1:
         valor1 = read(cuadruplos[current[-1]][3])
         print(valor1)
         current[-1] = current[-1]+1
+        
     # #Leer
     elif cuadruplos[current[-1]][0] == 'READ':
         res = input()
@@ -227,19 +233,42 @@ while current[-1] != -1:
     #Goto
     elif cuadruplos[current[-1]][0] == 'GOTO':
         current[-1] = cuadruplos[current[-1]][3]
-    
+
     #ERA para la memoria de la funcion
     elif cuadruplos[current[-1]][0] == 'ERA':
-         cuadruplos[-1][3]
+        # Crear el espacio de memoria en el stack de local.
+        mem_local.append({})
+        current_func = cuadruplos[current[-1]][3]
+        current[-1] = current[-1] + 1
 
+    elif cuadruplos[current[-1]][0] == 'GOTOSUB':
+        # Apuntar current al inicio de la siguiente función.
+        current_func = cuadruplos[current[-1]][3]
+        current[-1] = current[-1] + 1 
+        current.append(symbol_table[current_func]['start'])
+   
+    #Cudruplo de los paramateros
+    elif cuadruplos[current[-1]][0] == 'PARAMETER':
+        # Pasar los parametros de la función llamante a la función llamada.
+        origin_address = cuadruplos[current[-1]][2]
+        origin_value = read(origin_address, -2)
+        destination_address = cuadruplos[current[-1]][3]
+        write(destination_address, origin_value)
+        current[-1] = current[-1] + 1
 
-    #Final de funcion
+    # Final de funcion
     elif cuadruplos[current[-1]][0] == 'RETURN':
-    
+        # Almacenar valor de retorno en variable global.
+        address = symbol_table['#global']['vars'][current_func]['address']
+        write(address, cuadruplos[current[-1]][3])
+        current[-1] = current[-1] + 1
 
+    elif cuadruplos[current[-1]][0] == 'ENDFUNC':
+        # Regresar a la función que llamo a la actual.
+        mem_local.pop()
+        current.pop()
 
     else:
         print('Instruccion no implementada: ', cuadruplos[current[-1]][0])
         current[-1] = -1
     
-    print(cuadruplos[current[-1]][0])

@@ -1,26 +1,12 @@
 program testFunc;
 var numero: int; fact: int; prueba:char; prueba2: float.
 
-module void factorial(numero: int, caracter:char, flotante:float ){
-    var numero1:int.
-    numero1 = 1;
-    fact = 1;
-}
-module int factorial2(numero: int, caracter:char, flotante:float ){
-    var numero1:int.
-    numero1 = 4;
-    fact = 1;
-    return(numero1);
+module void factorial2(numero: int ){
+    print(numero);
+    
 }
 main {
-    fact = 1;
-    numero = 7;
-    prueba = 'c';
-    prueba2 = 4.0;
-    factorial(fact, prueba,prueba2);
-  while ( numero != 1 ) {
-    fact = fact * numero;
-    numero = numero -1;
-    print(fact);
-  };
+  fact = 6;
+  factorial2(fact);
+
 }

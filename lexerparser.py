@@ -645,7 +645,7 @@ def p_n_seen_var_name(p):
 def get_next_var_address():
     global current_func, current_type, next_global_int, next_global_float, next_global_char,next_global_bool, next_local_int, next_local_float, next_local_char, next_local_bool
     aux = 0
-    if current_func == '#global' or 'main':
+    if current_func == '#global' or current_func == 'main':
         if current_type == 'int':
             if next_global_int > 8999: 
                 error('Exceso de variables globales {}'.format(current_type))
@@ -1030,7 +1030,8 @@ def p_n_print(p):
 def p_n_save_param_type(p):
     'n_save_param_type : '
     global param_table, current_type, current_func,current_var
-    param_table.append([current_func,current_type])
+    param_address = symbol_table[current_func]['vars'][current_var]['address']
+    param_table.append([current_func,current_type,param_address])
 
 # Punto neuralgico para 
 def p_n_gen_funcquad(p):
@@ -1078,7 +1079,7 @@ def p_n_endfunc(p):
         cuadruplos.append(['ENDFUNC', '-', '-', '-'])
         flag_return = 0
     elif func_type == 'void':
-        pass
+        cuadruplos.append(['ENDFUNC', '-', '-', '-'])
     else:
         error('Funcion {} sin retorno'.format(func_type))
     
@@ -1123,14 +1124,16 @@ def p_n_check_param(p):
     param_type = ''
     argument = pila_operandos.pop()
     argument_type = pila_tipos.pop()
+    address = ''
     # Recorre la tabla de parametros para contar las veces que aparece la funcion y contar sus parametros
     for i in range(len(param_table)):
         if param_table[i][0] == called_func:
              params_func += 1
     if param_count < params_func:
         param_type = param_table[param_count][1]
+        address = param_table[param_count][2]
         if argument_type == param_type:
-            quad = ['PARAMETER', '-', argument, param_count + 1]
+            quad = ['PARAMETER', '-', argument,address]
             cuadruplos.append(quad)
         else:
             error('Tipo de parametro no concide con: {}'.format(param_type))
